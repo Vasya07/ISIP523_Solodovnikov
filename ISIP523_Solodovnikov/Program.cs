@@ -105,14 +105,40 @@ namespace ExpenseTracker
         }
         static void ShowExpenses(List<Expense> expenses)
         {
-            Console.WriteLine("Функция вывода данных будет реализована в следующем коммите");
+            Console.WriteLine("\n=== ВСЕ ОПЕРАЦИИ ===");
+            for (int i = 0; i < expenses.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {expenses[i].Name} - {expenses[i].Amount} руб.");
+            }
         }
 
         static void ShowStatistics(List<Expense> expenses)
         {
-            Console.WriteLine("Функция статистики будет реализована в следующем коммите");
-        }
+            if (expenses.Count == 0)
+            {
+                Console.WriteLine("Нет данных для статистики");
+                return;
+            }
 
+            decimal total = 0;
+            decimal max = expenses[0].Amount;
+            decimal min = expenses[0].Amount;
+
+            foreach (var expense in expenses)
+            {
+                total += expense.Amount;
+                if (expense.Amount > max) max = expense.Amount;
+                if (expense.Amount < min) min = expense.Amount;
+            }
+
+            decimal average = total / expenses.Count;
+
+            Console.WriteLine("\n=== СТАТИСТИКА ===");
+            Console.WriteLine($"Общая сумма: {total} руб.");
+            Console.WriteLine($"Средняя трата: {average:F2} руб.");
+            Console.WriteLine($"Максимальная трата: {max} руб.");
+            Console.WriteLine($"Минимальная трата: {min} руб.");
+        }
     }
 
     class Expense
