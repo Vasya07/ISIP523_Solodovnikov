@@ -7,15 +7,23 @@ namespace ExpenseTracker
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("=== Трекер расходов ===");
+            try
+            {
+                Console.WriteLine("=== Трекер расходов ===");
 
-            int operationsCount = GetOperationsCount();
+                int operationsCount = GetOperationsCount();
+                List<Expense> expenses = InputExpenses(operationsCount);
 
-            List<Expense> expenses = InputExpenses(operationsCount);
-
-            Console.WriteLine("\nВсе операции успешно записаны!");
+                Console.WriteLine("\nВсе операции успешно записаны!");
+                ShowMenu(expenses);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Произошла ошибка: {ex.Message}");
+                Console.WriteLine("Нажмите любую клавишу для выхода...");
+                Console.ReadKey();
+            }
         }
-
         static int GetOperationsCount()
         {
             int count;
