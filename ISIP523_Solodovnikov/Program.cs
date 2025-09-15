@@ -238,6 +238,40 @@ namespace ExpenseTracker
                 _ => "ед."
             };
         }
+        static void SearchExpenses(List<Expense> expenses)
+        {
+            if (expenses.Count == 0)
+            {
+                Console.WriteLine("Нет данных для поиска");
+                return;
+            }
+
+            Console.Write("Введите название для поиска: ");
+            string searchTerm = Console.ReadLine().ToLower();
+
+            var results = new List<Expense>();
+
+            foreach (var expense in expenses)
+            {
+                if (expense.Name.ToLower().Contains(searchTerm))
+                {
+                    results.Add(expense);
+                }
+            }
+
+            if (results.Count == 0)
+            {
+                Console.WriteLine("Ничего не найдено");
+            }
+            else
+            {
+                Console.WriteLine($"\nНайдено {results.Count} совпадений:");
+                foreach (var result in results)
+                {
+                    Console.WriteLine($"{result.Name} - {result.Amount} руб.");
+                }
+            }
+        }
     }
 
     class Expense
