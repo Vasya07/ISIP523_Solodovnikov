@@ -139,6 +139,30 @@ namespace ExpenseTracker
             Console.WriteLine($"Максимальная трата: {max} руб.");
             Console.WriteLine($"Минимальная трата: {min} руб.");
         }
+        static void SortExpenses(List<Expense> expenses)
+        {
+            if (expenses.Count == 0)
+            {
+                Console.WriteLine("Нет данных для сортировки");
+                return;
+            }
+
+            for (int i = 0; i < expenses.Count - 1; i++)
+            {
+                for (int j = 0; j < expenses.Count - i - 1; j++)
+                {
+                    if (expenses[j].Amount > expenses[j + 1].Amount)
+                    {
+                        var temp = expenses[j];
+                        expenses[j] = expenses[j + 1];
+                        expenses[j + 1] = temp;
+                    }
+                }
+            }
+
+            Console.WriteLine("Данные отсортированы по цене (по возрастанию)");
+            ShowExpenses(expenses);
+        }
     }
 
     class Expense
