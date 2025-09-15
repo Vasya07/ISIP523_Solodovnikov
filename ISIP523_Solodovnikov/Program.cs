@@ -163,6 +163,81 @@ namespace ExpenseTracker
             Console.WriteLine("Данные отсортированы по цене (по возрастанию)");
             ShowExpenses(expenses);
         }
+        static void ConvertCurrency(List<Expense> expenses)
+        {
+            if (expenses.Count == 0)
+            {
+                Console.WriteLine("Нет данных для конвертации");
+                return;
+            }
+
+            Console.WriteLine("\n=== КОНВЕРТАЦИЯ ВАЛЮТЫ ===");
+            Console.WriteLine("Доступные валюты:");
+            Console.WriteLine("1. Доллар США (USD)");
+            Console.WriteLine("2. Евро (EUR)");
+            Console.WriteLine("3. Фунт стерлингов (GBP)");
+            Console.WriteLine("4. Другая валюта (ввести курс вручную)");
+
+            Console.Write("Выберите валюту: ");
+            string choice = Console.ReadLine();
+
+            decimal rate = 0;
+
+            switch (choice)
+            {
+                case "1":
+                    rate = 75.0m; // Пример курса USD
+                    break;
+                case "2":
+                    rate = 85.0m; // Пример курса EUR
+                    break;
+                case "3":
+                    rate = 95.0m; // Пример курса GBP
+                    break;
+                case "4":
+                    rate = GetCustomRate();
+                    break;
+                default:
+                    Console.WriteLine("Неверный выбор!");
+                    return;
+            }
+
+            Console.WriteLine($"\nКонвертация по курсу: 1 рубль = {1 / rate:F4} выбранной валюты");
+            Console.WriteLine("\n=== РЕЗУЛЬТАТ КОНВЕРТАЦИИ ===");
+
+            foreach (var expense in expenses)
+            {
+                decimal convertedAmount = expense.Amount / rate;
+                string currencyName = GetCurrencyName(choice);
+                Console.WriteLine($"{expense.Name} - {convertedAmount:F2} {currencyName}");
+            }
+        }
+
+        static decimal GetCustomRate()
+        {
+            decimal rate;
+            while (true)
+            {
+                Console.Write("Введите курс (сколько рублей за 1 единицу валюты): ");
+                if (decimal.TryParse(Console.ReadLine(), out rate) && rate > 0)
+                {
+                    return rate;
+                }
+                Console.WriteLine("Ошибка! Введите корректный курс.");
+            }
+        }
+
+        static string GetCurrencyName(string choice)
+        {
+            return choice switch
+            {
+                "1" => "USD",
+                "2" => "EUR",
+                "3" => "GBP",
+                "4" => "ед.",
+                _ => "ед."
+            };
+        }
     }
 
     class Expense
