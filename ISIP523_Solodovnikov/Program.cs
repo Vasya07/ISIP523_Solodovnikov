@@ -3,26 +3,34 @@ using System.Collections.Generic;
 
 class Program
 {
+    // Главный метод программы - точка входа
     static void Main(string[] args)
     {
         try
         {
             Console.WriteLine("=== Трекер расходов ===");
 
+            // Получаем количество операций от пользователя
             int operationsCount = GetOperationsCount();
+
+            // Вводим данные о тратах
             List<Expense> expenses = InputExpenses(operationsCount);
 
             Console.WriteLine("\nВсе операции успешно записаны!");
+
+            // Показываем главное меню
             ShowMenu(expenses);
         }
         catch (Exception ex)
         {
+            // Обработка непредвиденных ошибок
             Console.WriteLine($"Произошла ошибка: {ex.Message}");
             Console.WriteLine("Нажмите любую клавишу для выхода...");
             Console.ReadKey();
         }
     }
 
+    // Метод для получения количества операций с проверкой ввода
     static int GetOperationsCount()
     {
         int count;
@@ -37,6 +45,7 @@ class Program
         }
     }
 
+    // Метод для ввода данных о тратах
     static List<Expense> InputExpenses(int count)
     {
         List<Expense> expenses = new List<Expense>();
@@ -45,17 +54,21 @@ class Program
         {
             Console.WriteLine($"\nОперация {i + 1}:");
 
+            // Ввод названия товара/услуги
             Console.Write("Название товара/услуги: ");
             string name = Console.ReadLine();
 
+            // Ввод суммы с проверкой
             decimal amount = GetAmount();
 
+            // Добавление новой траты в список
             expenses.Add(new Expense(name, amount));
         }
 
         return expenses;
     }
 
+    // Метод для получения суммы с проверкой корректности
     static decimal GetAmount()
     {
         decimal amount;
@@ -70,6 +83,7 @@ class Program
         }
     }
 
+    // Метод для отображения главного меню и обработки выбора пользователя
     static void ShowMenu(List<Expense> expenses)
     {
         while (true)
@@ -85,25 +99,26 @@ class Program
             Console.Write("Выберите пункт меню: ");
             string choice = Console.ReadLine();
 
+            // Обработка выбора пользователя
             switch (choice)
             {
                 case "1":
-                    ShowExpenses(expenses);
+                    ShowExpenses(expenses); // Показать все траты
                     break;
                 case "2":
-                    ShowStatistics(expenses);
+                    ShowStatistics(expenses); // Показать статистику
                     break;
                 case "3":
-                    SortExpenses(expenses);
+                    SortExpenses(expenses); // Отсортировать по цене
                     break;
                 case "4":
-                    ConvertCurrency(expenses);
+                    ConvertCurrency(expenses); // Конвертировать валюту
                     break;
                 case "5":
-                    SearchExpenses(expenses);
+                    SearchExpenses(expenses); // Поиск по названию
                     break;
                 case "0":
-                    Console.WriteLine("До свидания!");
+                    Console.WriteLine("До свидания!"); // Выход из программы
                     return;
                 default:
                     Console.WriteLine("Неверный выбор! Попробуйте снова.");
@@ -112,6 +127,7 @@ class Program
         }
     }
 
+    // Метод для отображения всех операций
     static void ShowExpenses(List<Expense> expenses)
     {
         if (expenses.Count == 0)
@@ -127,6 +143,7 @@ class Program
         }
     }
 
+    // Метод для расчета и отображения статистики
     static void ShowStatistics(List<Expense> expenses)
     {
         if (expenses.Count == 0)
@@ -139,6 +156,7 @@ class Program
         decimal max = expenses[0].Amount;
         decimal min = expenses[0].Amount;
 
+        // Расчет общей суммы, максимума и минимума
         foreach (var expense in expenses)
         {
             total += expense.Amount;
@@ -146,8 +164,10 @@ class Program
             if (expense.Amount < min) min = expense.Amount;
         }
 
+        // Расчет средней траты
         decimal average = total / expenses.Count;
 
+        // Вывод статистики
         Console.WriteLine("\n=== СТАТИСТИКА ===");
         Console.WriteLine($"Общая сумма: {total} руб.");
         Console.WriteLine($"Средняя трата: {average:F2} руб.");
@@ -155,6 +175,7 @@ class Program
         Console.WriteLine($"Минимальная трата: {min} руб.");
     }
 
+    // Метод для сортировки трат по цене (пузырьковая сортировка)
     static void SortExpenses(List<Expense> expenses)
     {
         if (expenses.Count == 0)
@@ -163,14 +184,14 @@ class Program
             return;
         }
 
-        // Пузырьковая сортировка
+        // Реализация пузырьковой сортировки
         for (int i = 0; i < expenses.Count - 1; i++)
         {
             for (int j = 0; j < expenses.Count - i - 1; j++)
             {
                 if (expenses[j].Amount > expenses[j + 1].Amount)
                 {
-                    // Меняем местами
+                    // Обмен местами двух элементов
                     var temp = expenses[j];
                     expenses[j] = expenses[j + 1];
                     expenses[j + 1] = temp;
@@ -179,9 +200,10 @@ class Program
         }
 
         Console.WriteLine("Данные отсортированы по цене (по возрастанию)");
-        ShowExpenses(expenses);
+        ShowExpenses(expenses); // Показываем отсортированный список
     }
 
+    // Метод для конвертации валюты
     static void ConvertCurrency(List<Expense> expenses)
     {
         if (expenses.Count == 0)
@@ -202,19 +224,20 @@ class Program
 
         decimal rate = 0;
 
+        // Установка курса в зависимости от выбора
         switch (choice)
         {
             case "1":
-                rate = 75.0m;
+                rate = 75.0m; // Курс доллара
                 break;
             case "2":
-                rate = 85.0m;
+                rate = 85.0m; // Курс евро
                 break;
             case "3":
-                rate = 95.0m;
+                rate = 95.0m; // Курс фунта
                 break;
             case "4":
-                rate = GetCustomRate();
+                rate = GetCustomRate(); // Пользовательский курс
                 break;
             default:
                 Console.WriteLine("Неверный выбор!");
@@ -224,6 +247,7 @@ class Program
         Console.WriteLine($"\nКонвертация по курсу: 1 рубль = {1 / rate:F4} выбранной валюты");
         Console.WriteLine("\n=== РЕЗУЛЬТАТ КОНВЕРТАЦИИ ===");
 
+        // Конвертация и вывод каждой траты
         foreach (var expense in expenses)
         {
             decimal convertedAmount = expense.Amount / rate;
@@ -232,6 +256,7 @@ class Program
         }
     }
 
+    // Метод для получения пользовательского курса валюты
     static decimal GetCustomRate()
     {
         decimal rate;
@@ -246,6 +271,7 @@ class Program
         }
     }
 
+    // Метод для получения названия валюты по выбору
     static string GetCurrencyName(string choice)
     {
         return choice switch
@@ -258,6 +284,7 @@ class Program
         };
     }
 
+    // Метод для поиска трат по названию
     static void SearchExpenses(List<Expense> expenses)
     {
         if (expenses.Count == 0)
@@ -271,6 +298,7 @@ class Program
 
         var results = new List<Expense>();
 
+        // Поиск совпадений в названиях трат
         foreach (var expense in expenses)
         {
             if (expense.Name.ToLower().Contains(searchTerm))
@@ -279,6 +307,7 @@ class Program
             }
         }
 
+        // Вывод результатов поиска
         if (results.Count == 0)
         {
             Console.WriteLine("Ничего не найдено");
@@ -294,11 +323,13 @@ class Program
     }
 }
 
+// Класс для представления одной траты
 class Expense
 {
-    public string Name { get; set; }
-    public decimal Amount { get; set; }
+    public string Name { get; set; } // Название товара/услуги
+    public decimal Amount { get; set; } // Сумма траты в рублях
 
+    // Конструктор для создания новой траты
     public Expense(string name, decimal amount)
     {
         Name = name;
