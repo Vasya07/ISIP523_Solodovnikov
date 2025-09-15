@@ -62,6 +62,57 @@ namespace ExpenseTracker
                 Console.WriteLine("Ошибка! Введите корректную сумму.");
             }
         }
+        static void ShowMenu(List<Expense> expenses)
+        {
+            while (true)
+            {
+                Console.WriteLine("\n=== ГЛАВНОЕ МЕНЮ ===");
+                Console.WriteLine("1. Вывод данных");
+                Console.WriteLine("2. Статистика");
+                Console.WriteLine("3. Сортировка по цене");
+                Console.WriteLine("4. Конвертация валюты");
+                Console.WriteLine("5. Поиск по названию");
+                Console.WriteLine("0. Выход");
+
+                Console.Write("Выберите пункт меню: ");
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        ShowExpenses(expenses);
+                        break;
+                    case "2":
+                        ShowStatistics(expenses);
+                        break;
+                    case "3":
+                        SortExpenses(expenses);
+                        break;
+                    case "4":
+                        ConvertCurrency(expenses);
+                        break;
+                    case "5":
+                        SearchExpenses(expenses);
+                        break;
+                    case "0":
+                        Console.WriteLine("До свидания!");
+                        return;
+                    default:
+                        Console.WriteLine("Неверный выбор! Попробуйте снова.");
+                        break;
+                }
+            }
+        }
+        static void ShowExpenses(List<Expense> expenses)
+        {
+            Console.WriteLine("Функция вывода данных будет реализована в следующем коммите");
+        }
+
+        static void ShowStatistics(List<Expense> expenses)
+        {
+            Console.WriteLine("Функция статистики будет реализована в следующем коммите");
+        }
+
     }
 
     class Expense
