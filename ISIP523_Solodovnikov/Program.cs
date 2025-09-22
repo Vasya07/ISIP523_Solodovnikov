@@ -413,7 +413,7 @@ namespace ShopInventory
 
             if (products.Count == 0)
             {
-                Console.WriteLine("ОШИБКА: Товары не найдены.");
+                Console.WriteLine("ОШИБКА: Товары не найдены!");
                 player.Play();
             }
             else
