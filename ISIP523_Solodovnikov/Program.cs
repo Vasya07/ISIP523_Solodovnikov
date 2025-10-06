@@ -91,7 +91,58 @@ namespace LibraryManagement
                 }
                 return false;
             }
+            public List<Book> SearchBooks(string searchType, string searchTerm)
+            {
+                if (string.IsNullOrWhiteSpace(searchTerm))
+                    return new List<Book>();
 
+                return searchType.ToLower() switch
+                {
+                    "title" => _books.Where(b => b.Title.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                                     .OrderBy(b => b.Title)
+                                     .ToList(),
+                    "author" => _books.Where(b => b.Author.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                                      .OrderBy(b => b.Author)
+                                      .ToList(),
+                    "genre" => Enum.TryParse<Genre>(searchTerm, true, out var genre)
+                               ? _books.Where(b => b.Genre == genre).OrderBy(b => b.Title).ToList()
+                               : new List<Book>(),
+                    _ => new List<Book>()
+                };
+            }
+            public List<Book> SortBooks(string sortBy, bool ascending = true)
+            {
+                return sortBy.ToLower() switch
+                {
+                    "title" => ascending
+                        ? _books.OrderBy(b => b.Title).ToList()
+                        : _books.OrderByDescending(b => b.Title).ToList(),
+                    "year" => ascending
+                        ? _books.OrderBy(b => b.Year).ToList()
+                        : _books.OrderByDescending(b => b.Year).ToList(),
+                    "price" => ascending
+                        ? _books.OrderBy(b => b.Price).ToList()
+                        : _books.OrderByDescending(b => b.Price).ToList(),
+                    _ => _books.OrderBy(b => b.Id).ToList()
+                };
+            }
+            public (Book MostExpensive, Book Cheapest) GetPriceExtremes()
+            {
+                if (!_books.Any())
+                    return (null, null);
+
+                var mostExpensive = _books.OrderByDescending(b => b.Price).First();
+                var cheapest = _books.OrderBy(b => b.Price).First();
+
+                return (mostExpensive, cheapest);
+            }
+            public Dictionary<string, int> GetAuthorStatistics()
+            {
+                return _books.GroupBy(b => b.Author)
+                             .ToDictionary(g => g.Key, g => g.Count())
+                             .OrderByDescending(kv => kv.Value)
+                             .ToDictionary(kv => kv.Key, kv => kv.Value);
+            }
         }
         class Program
         {
@@ -114,10 +165,22 @@ namespace LibraryManagement
                         case "3":
                             RemoveBookMenu(libraryService);
                             break;
+                        case "4":
+                            SearchBooksMenu(libraryService);
+                            break;
+                        case "5":
+                            SortBooksMenu(libraryService);
+                            break;
+                        case "6":
+                            ShowPriceExtremes(libraryService);
+                            break;
+                        case "7":
+                            ShowAuthorStatistics(libraryService);
+                            break;
                         case "0":
                             return;
                         default:
-                            Console.WriteLine("Неверный выбор. Попробуйте снова.");
+                            Console.WriteLine("Данный функционал не предусмотрен!");
                             break;
                     }
 
@@ -236,6 +299,127 @@ namespace LibraryManagement
                 catch (Exception ex)
                 {
                     Console.WriteLine($"Произошла ошибка: {ex.Message}");
+                }
+            }
+            static void SearchBooksMenu(LibraryService libraryService)
+            {
+                Console.WriteLine("\nПоиск книг:");
+                Console.Write("Как будем искать книгу?");
+                Console.WriteLine("1. По названию");
+                Console.WriteLine("2. По автору");
+                Console.WriteLine("3. По жанру");
+                
+                var searchTypeChoice = Console.ReadLine();
+                string searchType = searchTypeChoice switch
+                {
+                    "1" => "title",
+                    "2" => "author",
+                    "3" => "genre",
+                    _ => null
+                };
+
+                if (searchType == null)
+                {
+                    Console.WriteLine("ОШИБКА: Неверный выбор типа поиска!");
+                    return;
+                }
+
+                if (searchType == "genre")
+                {
+                    Console.WriteLine("Доступные жанры: " + string.Join(", ", Enum.GetNames(typeof(Genre))));
+                }
+
+                Console.Write("Введите поисковый запрос: ");
+                var searchTerm = Console.ReadLine();
+
+                var results = libraryService.SearchBooks(searchType, searchTerm);
+
+                Console.WriteLine($"\nРезультаты поиска ({results.Count} книг):");
+
+                if (!results.Any())
+                {
+                    Console.WriteLine("Книги не найдены!");
+                    return;
+                }
+
+                foreach (var book in results)
+                {
+                    Console.WriteLine(book);
+                }
+            }   
+            static void SortBooksMenu(LibraryService libraryService)
+            {
+                Console.WriteLine("\nСортировка книг:");
+                Console.WriteLine("================");
+
+                Console.WriteLine("1. По названию (А-Я)");
+                Console.WriteLine("2. По названию (Я-А)");
+                Console.WriteLine("3. По году (сначала старые)");
+                Console.WriteLine("4. По году (сначала новые)");
+                Console.Write("Выберите тип сортировки: ");
+
+                var choice = Console.ReadLine();
+                var (sortBy, ascending) = choice switch
+                {
+                    "1" => ("title", true),
+                    "2" => ("title", false),
+                    "3" => ("year", true),
+                    "4" => ("year", false),
+                    _ => (null, true)
+                };
+
+                if (sortBy == null)
+                {
+                    Console.WriteLine("Неверный выбор сортировки.");
+                    return;
+                }
+
+                var sortedBooks = libraryService.SortBooks(sortBy, ascending);
+
+                Console.WriteLine($"\nОтсортированные книги:");
+                Console.WriteLine("=====================");
+
+                foreach (var book in sortedBooks)
+                {
+                    Console.WriteLine(book);
+                }
+            }
+            static void ShowPriceExtremes(LibraryService libraryService)
+            {
+                Console.WriteLine("\nАнализ цен:");
+                Console.WriteLine("===========");
+
+                var (mostExpensive, cheapest) = libraryService.GetPriceExtremes();
+
+                if (mostExpensive == null || cheapest == null)
+                {
+                    Console.WriteLine("В библиотеке нет книг.");
+                    return;
+                }
+
+                Console.WriteLine($"Самая дорогая книга: {mostExpensive}");
+                Console.WriteLine($"Самая дешевая книга: {cheapest}");
+
+                var averagePrice = libraryService.GetAllBooks().Average(b => b.Price);
+                Console.WriteLine($"Средняя цена: {averagePrice:C}");
+            }
+
+            static void ShowAuthorStatistics(LibraryService libraryService)
+            {
+                Console.WriteLine("\nСтатистика по авторам:");
+                Console.WriteLine("=====================");
+
+                var statistics = libraryService.GetAuthorStatistics();
+
+                if (!statistics.Any())
+                {
+                    Console.WriteLine("В библиотеке нет книг.");
+                    return;
+                }
+
+                foreach (var (author, count) in statistics)
+                {
+                    Console.WriteLine($"{author}: {count} книг(и)");
                 }
             }
         }
