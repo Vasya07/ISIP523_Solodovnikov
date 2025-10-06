@@ -7,11 +7,11 @@ namespace LibraryManagement
 {
     public enum Genre
     {
-        Fantasy,
-        ScienceFiction,
-        Mystery,
-        Romance,
-        Horror,
+        Fantastika,
+        Nauchnaya_Fantastika,
+        Detectives,
+        Romans,
+        Horrors,
         Biography,
         History
     }
@@ -53,11 +53,11 @@ namespace LibraryManagement
             }
             private void InitializeTestData()
             {
-                AddBook("Властелин Колец", "Дж. Р. Р. Толкин", Genre.Fantasy, 1954, 1200m);
-                AddBook("1984", "Джордж Оруэлл", Genre.ScienceFiction, 1949, 850m);
-                AddBook("Убийство в Восточном экспрессе", "Агата Кристи", Genre.Mystery, 1934, 750m);
-                AddBook("Гордость и предубеждение", "Джейн Остин", Genre.Romance, 1813, 680m);
-                AddBook("Дракула", "Брэм Стокер", Genre.Horror, 1897, 920m);
+                AddBook("Властелин Колец", "Дж. Р. Р. Толкин", Genre.Fantastika, 1954, 1200);
+                AddBook("1984", "Джордж Оруэлл", Genre.Nauchnaya_Fantastika, 1949, 850);
+                AddBook("Убийство в Восточном экспрессе", "Агата Кристи", Genre.Detectives, 1934, 750);
+                AddBook("Гордость и предубеждение", "Джейн Остин", Genre.Romans, 1813, 680);
+                AddBook("Дракула", "Брэм Стокер", Genre.Horrors, 1897, 920);
             }
             public bool AddBook(string title, string author, Genre genre, int year, decimal price)
             {
@@ -157,24 +157,31 @@ namespace LibraryManagement
                     switch (choice)
                     {
                         case "1":
+                            Console.Clear();
                             ShowAllBooks(libraryService);
                             break;
                         case "2":
+                            Console.Clear();
                             AddBookMenu(libraryService);
                             break;
                         case "3":
+                            Console.Clear();
                             RemoveBookMenu(libraryService);
                             break;
                         case "4":
+                            Console.Clear();
                             SearchBooksMenu(libraryService);
                             break;
                         case "5":
+                            Console.Clear();
                             SortBooksMenu(libraryService);
                             break;
                         case "6":
+                            Console.Clear();
                             ShowPriceExtremes(libraryService);
                             break;
                         case "7":
+                            Console.Clear();
                             ShowAuthorStatistics(libraryService);
                             break;
                         case "0":
@@ -192,27 +199,28 @@ namespace LibraryManagement
 
             static void ShowMainMenu()
             {
-                Console.WriteLine("\nГлавное меню:");
                 Console.WriteLine("1. Показать все книги");
                 Console.WriteLine("2. Добавить книгу");
                 Console.WriteLine("3. Удалить книгу по ID");
-                Console.WriteLine("4. Найти книги");
+                Console.WriteLine("4. Поиск книг");
                 Console.WriteLine("5. Сортировать книги");
-                Console.WriteLine("6. Самая дорогая/дешевая книга");
-                Console.WriteLine("7. Статистика по авторам");
-                Console.WriteLine("0. Выход");
+                Console.WriteLine("6. Анализировать цены на книги");
+                Console.WriteLine("7. Показать количество книг каждого автора");
+                Console.WriteLine("0. Выход из программы");
                 Console.Write("Выберите действие: ");
             }
             static void ShowAllBooks(LibraryService libraryService)
             {
                 var books = libraryService.GetAllBooks();
-                Console.WriteLine("\nПеред вами список всех книг:");
 
                 if (!books.Any())
                 {
-                    Console.WriteLine("ОШИБКА: Книги не найдены!");
+                    Console.WriteLine("Книги не найдены!");
                     return;
                 }
+
+                Console.WriteLine($"Всего книг: {books.Count}");
+                Console.WriteLine();
 
                 foreach (var book in books)
                 {
@@ -221,7 +229,6 @@ namespace LibraryManagement
             }
             static void AddBookMenu(LibraryService libraryService)
             {
-                Console.WriteLine("\nДобавление новой книги:");
                 try
                 {
                     Console.Write("Введите название книги: ");
@@ -241,7 +248,7 @@ namespace LibraryManagement
                     if (!int.TryParse(Console.ReadLine(), out int genreIndex) ||
                         genreIndex < 1 || genreIndex > genres.Length)
                     {
-                        Console.WriteLine("ОШИБКА: неверный выбор жанра.");
+                        Console.WriteLine("ОШИБКА: Неверный выбор жанра! Книга не добавлена.");
                         return;
                     }
                     var genre = (Genre)(genreIndex - 1);
@@ -249,14 +256,14 @@ namespace LibraryManagement
                     Console.Write("Введите год издания: ");
                     if (!int.TryParse(Console.ReadLine(), out int year) || year <= 0)
                     {
-                        Console.WriteLine("ОШИБКА: год должен быть положительным числом.");
+                        Console.WriteLine("ОШИБКА: Год должен быть положительным числом! Книга не добавлена.");
                         return;
                     }
 
                     Console.Write("Введите цену: ");
                     if (!decimal.TryParse(Console.ReadLine(), out decimal price) || price < 0)
                     {
-                        Console.WriteLine("ОШИБКА: цена не может быть отрицательной.");
+                        Console.WriteLine("ОШИБКА: Цена не может быть отрицательной! Книга не добавлена.");
                         return;
                     }
 
@@ -266,7 +273,8 @@ namespace LibraryManagement
                     }
                     else
                     {
-                        Console.WriteLine("ОШИБКА: неверные данные книги.");
+                        Console.WriteLine("Книга не добавлена.");
+                        Console.WriteLine("ОШИБКА: Неверные данные для книги!");
                     }
                 }
                 catch (Exception ex)
@@ -277,13 +285,12 @@ namespace LibraryManagement
 
             static void RemoveBookMenu(LibraryService libraryService)
             {
-                Console.WriteLine("\nУдаление книги:");
                 try
                 {
                     Console.Write("Введите ID книги для удаления: ");
                     if (!int.TryParse(Console.ReadLine(), out int id))
                     {
-                        Console.WriteLine("ОШИБКА: неверный формат ID.");
+                        Console.WriteLine("ОШИБКА: Неверно указанный ID книги! Книга не удалена.");
                         return;
                     }
 
@@ -293,7 +300,8 @@ namespace LibraryManagement
                     }
                     else
                     {
-                        Console.WriteLine("ОШИБКА: книга с указанным ID не найдена.");
+                        Console.WriteLine("Книга не удалена.");
+                        Console.WriteLine("ОШИБКА: Книга с указанным ID не найдена!");
                     }
                 }
                 catch (Exception ex)
@@ -303,8 +311,7 @@ namespace LibraryManagement
             }
             static void SearchBooksMenu(LibraryService libraryService)
             {
-                Console.WriteLine("\nПоиск книг:");
-                Console.Write("Как будем искать книгу?");
+                Console.Write("Как будем искать книгу?\n");
                 Console.WriteLine("1. По названию");
                 Console.WriteLine("2. По автору");
                 Console.WriteLine("3. По жанру");
@@ -320,7 +327,7 @@ namespace LibraryManagement
 
                 if (searchType == null)
                 {
-                    Console.WriteLine("ОШИБКА: Неверный выбор типа поиска!");
+                    Console.WriteLine("Поиск завершён неудачно. ОШИБКА: Неверный выбор типа поиска!");
                     return;
                 }
 
@@ -334,14 +341,13 @@ namespace LibraryManagement
 
                 var results = libraryService.SearchBooks(searchType, searchTerm);
 
-                Console.WriteLine($"\nРезультаты поиска ({results.Count} книг):");
-
                 if (!results.Any())
                 {
-                    Console.WriteLine("Книги не найдены!");
+                    Console.WriteLine($"По запросу {searchTerm} ничего не найдено!");
                     return;
                 }
 
+                Console.WriteLine($"\nРезультаты поиска ({results.Count} книг):");
                 foreach (var book in results)
                 {
                     Console.WriteLine(book);
@@ -349,9 +355,6 @@ namespace LibraryManagement
             }   
             static void SortBooksMenu(LibraryService libraryService)
             {
-                Console.WriteLine("\nСортировка книг:");
-                Console.WriteLine("================");
-
                 Console.WriteLine("1. По названию (А-Я)");
                 Console.WriteLine("2. По названию (Я-А)");
                 Console.WriteLine("3. По году (сначала старые)");
@@ -370,14 +373,11 @@ namespace LibraryManagement
 
                 if (sortBy == null)
                 {
-                    Console.WriteLine("Неверный выбор сортировки.");
+                    Console.WriteLine("ОШИБКА: Неверный выбор сортировки!");
                     return;
                 }
 
                 var sortedBooks = libraryService.SortBooks(sortBy, ascending);
-
-                Console.WriteLine($"\nОтсортированные книги:");
-                Console.WriteLine("=====================");
 
                 foreach (var book in sortedBooks)
                 {
@@ -386,14 +386,12 @@ namespace LibraryManagement
             }
             static void ShowPriceExtremes(LibraryService libraryService)
             {
-                Console.WriteLine("\nАнализ цен:");
-                Console.WriteLine("===========");
 
                 var (mostExpensive, cheapest) = libraryService.GetPriceExtremes();
 
                 if (mostExpensive == null || cheapest == null)
                 {
-                    Console.WriteLine("В библиотеке нет книг.");
+                    Console.WriteLine("ОШИБКА: В библиотеке отсутсвуют книги!");
                     return;
                 }
 
@@ -401,19 +399,16 @@ namespace LibraryManagement
                 Console.WriteLine($"Самая дешевая книга: {cheapest}");
 
                 var averagePrice = libraryService.GetAllBooks().Average(b => b.Price);
-                Console.WriteLine($"Средняя цена: {averagePrice:C}");
+                Console.WriteLine($"Средняя цена: {averagePrice}");
             }
 
             static void ShowAuthorStatistics(LibraryService libraryService)
             {
-                Console.WriteLine("\nСтатистика по авторам:");
-                Console.WriteLine("=====================");
-
                 var statistics = libraryService.GetAuthorStatistics();
 
                 if (!statistics.Any())
                 {
-                    Console.WriteLine("В библиотеке нет книг.");
+                    Console.WriteLine("ОШИБКА: В библиотеке отсутсвуют книги!");
                     return;
                 }
 
