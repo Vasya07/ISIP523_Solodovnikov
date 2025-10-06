@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using static LibraryManagement.Book;
 
 namespace LibraryManagement
 {
@@ -80,6 +81,17 @@ namespace LibraryManagement
             {
                 return _books.FirstOrDefault(b => b.Id == id);
             }
+            public bool RemoveBook(int id)
+            {
+                var book = FindBookById(id);
+                if (book != null)
+                {
+                    _books.Remove(book);
+                    return true;
+                }
+                return false;
+            }
+
         }
         class Program
         {
@@ -97,7 +109,10 @@ namespace LibraryManagement
                             ShowAllBooks(libraryService);
                             break;
                         case "2":
-                            Console.WriteLine("Функция добавления книги будет реализована в следующем коммите");
+                            AddBookMenu(libraryService);
+                            break;
+                        case "3":
+                            RemoveBookMenu(libraryService);
                             break;
                         case "0":
                             return;
@@ -125,7 +140,6 @@ namespace LibraryManagement
                 Console.WriteLine("0. Выход");
                 Console.Write("Выберите действие: ");
             }
-
             static void ShowAllBooks(LibraryService libraryService)
             {
                 var books = libraryService.GetAllBooks();
@@ -140,6 +154,88 @@ namespace LibraryManagement
                 foreach (var book in books)
                 {
                     Console.WriteLine(book);
+                }
+            }
+            static void AddBookMenu(LibraryService libraryService)
+            {
+                Console.WriteLine("\nДобавление новой книги:");
+                try
+                {
+                    Console.Write("Введите название книги: ");
+                    var title = Console.ReadLine();
+
+                    Console.Write("Введите автора: ");
+                    var author = Console.ReadLine();
+
+                    Console.WriteLine("Доступные жанры:");
+                    var genres = Enum.GetValues(typeof(Genre));
+                    for (int i = 0; i < genres.Length; i++)
+                    {
+                        Console.WriteLine($"{i + 1}. {genres.GetValue(i)}");
+                    }
+
+                    Console.Write("Выберите номер жанра: ");
+                    if (!int.TryParse(Console.ReadLine(), out int genreIndex) ||
+                        genreIndex < 1 || genreIndex > genres.Length)
+                    {
+                        Console.WriteLine("ОШИБКА: неверный выбор жанра.");
+                        return;
+                    }
+                    var genre = (Genre)(genreIndex - 1);
+
+                    Console.Write("Введите год издания: ");
+                    if (!int.TryParse(Console.ReadLine(), out int year) || year <= 0)
+                    {
+                        Console.WriteLine("ОШИБКА: год должен быть положительным числом.");
+                        return;
+                    }
+
+                    Console.Write("Введите цену: ");
+                    if (!decimal.TryParse(Console.ReadLine(), out decimal price) || price < 0)
+                    {
+                        Console.WriteLine("ОШИБКА: цена не может быть отрицательной.");
+                        return;
+                    }
+
+                    if (libraryService.AddBook(title, author, genre, year, price))
+                    {
+                        Console.WriteLine("Книга успешно добавлена!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("ОШИБКА: неверные данные книги.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Произошла ошибка: {ex.Message}");
+                }
+            }
+
+            static void RemoveBookMenu(LibraryService libraryService)
+            {
+                Console.WriteLine("\nУдаление книги:");
+                try
+                {
+                    Console.Write("Введите ID книги для удаления: ");
+                    if (!int.TryParse(Console.ReadLine(), out int id))
+                    {
+                        Console.WriteLine("ОШИБКА: неверный формат ID.");
+                        return;
+                    }
+
+                    if (libraryService.RemoveBook(id))
+                    {
+                        Console.WriteLine("Книга успешно удалена!");
+                    }
+                    else
+                    {
+                        Console.WriteLine("ОШИБКА: книга с указанным ID не найдена.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Произошла ошибка: {ex.Message}");
                 }
             }
         }
