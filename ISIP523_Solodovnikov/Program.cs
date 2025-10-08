@@ -174,3 +174,75 @@
                 }
             }
         }
+        static BankAccount CreateAccount()
+        {
+            Console.Clear();
+
+            string ownerName;
+            while (true)
+            {
+                Console.Write("Введите имя владельца: ");
+                ownerName = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(ownerName))
+                {
+                    Console.WriteLine("ОШИБКА: Имя владельца не может быть пустым!");
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            decimal initialBalance;
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Введите начальный баланс: ");
+                    initialBalance = Convert.ToInt32((Console.ReadLine()));
+
+                    if (initialBalance < 0)
+                    {
+                        Console.WriteLine("ОШИБКА: Начальный баланс не может быть отрицательным!");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("ОШИБКА: Неверно введён начальный баланс! Используйте числа.");
+                }
+            }
+
+            decimal operationLimit;
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Введите лимит операции: ");
+                    operationLimit = Convert.ToInt32((Console.ReadLine()));
+
+                    if (operationLimit < 0)
+                    {
+                        Console.WriteLine("ОШИБКА: Лимит операции не может быть отрицательным!");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("ОШИБКА: Неверно введён лимит операции! Используйте числа.");
+                }
+            }
+
+            var account = new BankAccount(ownerName, initialBalance, operationLimit);
+            Console.WriteLine("\nСчёт успешно создан!");
+            Console.WriteLine($"Номер счёта: {account.AccountNumber}");
+            WaitForKey();
+            return account;
+        }
