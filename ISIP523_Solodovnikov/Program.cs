@@ -371,3 +371,44 @@
             Console.WriteLine($"Имя владельца успешно изменено на: {newName}");
             WaitForKey();
         }
+        static void ShowAccountInfo(BankAccount account)
+        {
+            Console.Clear();
+            ValidateAccountExists(account);
+            account.ShowAccountInfo();
+            WaitForKey();
+        }
+
+        static void CloseAccount(BankAccount account)
+        {
+            Console.Clear();
+            ValidateAccountExists(account);
+
+            Console.Write("Вы уверены, что хотите закрыть счёт? ('y' - ДА / 'n' - НЕТ ): ");
+            var confirmation = Console.ReadLine();
+
+            if (confirmation?.ToLower() == "y")
+            {
+                account.CloseAccount();
+                Console.WriteLine("Счёт успешно закрыт. Операции пополнения и списания запрещены");
+            }
+            else
+            {
+                Console.WriteLine("Закрытие счёта отменено");
+            }
+            WaitForKey();
+        }
+
+        static void ValidateAccountExists(BankAccount account)
+        {
+            if (account == null)
+                throw new InvalidOperationException("ОШИБКА: Сначала откройте счёт!");
+        }
+
+        static void WaitForKey()
+        {
+            Console.WriteLine("\nНажмите любую клавишу для продолжения");
+            Console.ReadKey();
+        }
+    }
+}
