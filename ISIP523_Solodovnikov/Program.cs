@@ -113,3 +113,64 @@
                 throw new InvalidOperationException("ОПЕРАЦИЯ НЕВОЗМОЖНА: счёт закрыт!");
         }
     }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            BankAccount account = null;
+
+            while (true)
+            {
+                Console.Clear();
+                Console.WriteLine("1 - Открыть счёт");
+                Console.WriteLine("2 - Пополнить счёт");
+                Console.WriteLine("3 - Снять со счёта");
+                Console.WriteLine("4 - Изменить лимит операции");
+                Console.WriteLine("5 - Изменить имя владельца");
+                Console.WriteLine("6 - Показать информацию о счёте");
+                Console.WriteLine("7 - Закрыть счёт");
+                Console.WriteLine("0 - Выход");
+
+                Console.Write("\nВыберите команду: ");
+                var choice = Console.ReadLine();
+
+                try
+                {
+                    switch (choice)
+                    {
+                        case "1":
+                            account = CreateAccount();
+                            break;
+                        case "2":
+                            DepositToAccount(account);
+                            break;
+                        case "3":
+                            WithdrawFromAccount(account);
+                            break;
+                        case "4":
+                            ChangeOperationLimit(account);
+                            break;
+                        case "5":
+                            ChangeOwnerName(account);
+                            break;
+                        case "6":
+                            ShowAccountInfo(account);
+                            break;
+                        case "7":
+                            CloseAccount(account);
+                            break;
+                        case "0":
+                            return;
+                        default:
+                            Console.WriteLine("Недопустимая команда!");
+                            WaitForKey();
+                            break;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"ОШИБКА: {ex.Message}");
+                    WaitForKey();
+                }
+            }
+        }
