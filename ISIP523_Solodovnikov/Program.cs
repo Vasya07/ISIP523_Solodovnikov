@@ -246,3 +246,70 @@
             WaitForKey();
             return account;
         }
+        static void DepositToAccount(BankAccount account)
+        {
+            Console.Clear();
+            ValidateAccountExists(account);
+
+            decimal amount;
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Введите сумму для пополнения: ");
+                    amount = Convert.ToInt32((Console.ReadLine()));
+
+                    if (amount <= 0)
+                    {
+                        Console.WriteLine("ОШИБКА: Сумма пополнения должна быть положительной!");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("ОШИБКА: Неверно введена сумма для пополнения, используйте только числа!");
+                }
+            }
+
+            account.Deposit(amount);
+            Console.WriteLine($"Счёт успешно пополнен на {amount:C}");
+            Console.WriteLine($"Новый баланс: {account.Balance:C}");
+            WaitForKey();
+        }
+
+        static void WithdrawFromAccount(BankAccount account)
+        {
+            Console.Clear();
+            ValidateAccountExists(account);
+
+            decimal amount;
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Введите сумму для снятия: ");
+                    amount = Convert.ToInt32((Console.ReadLine()));
+
+                    if (amount <= 0)
+                    {
+                        Console.WriteLine("ОШИБКА: Сумма снятия должна быть положительной!");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("ОШИБКА: Неверно введена сумма для снятия! Используйте числа.");
+                }
+            }
+
+            account.Withdraw(amount);
+            Console.WriteLine($"Со счёта успешно снято {amount:C}");
+            Console.WriteLine($"Новый баланс: {account.Balance:C}");
+            WaitForKey();
+        }
