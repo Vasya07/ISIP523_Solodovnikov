@@ -313,3 +313,61 @@
             Console.WriteLine($"Новый баланс: {account.Balance:C}");
             WaitForKey();
         }
+        static void ChangeOperationLimit(BankAccount account)
+        {
+            Console.Clear();
+            ValidateAccountExists(account);
+
+            decimal newLimit;
+            while (true)
+            {
+                try
+                {
+                    Console.Write("Введите новый лимит операции: ");
+                    newLimit = Convert.ToInt32((Console.ReadLine()));
+
+                    if (newLimit < 0)
+                    {
+                        Console.WriteLine("ОШИБКА: Лимит операции не может быть отрицательным!");
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                catch (FormatException)
+                {
+                    Console.WriteLine("ОШИБКА: Неверно введён лимит операции!");
+                }
+            }
+
+            account.ChangeOperationLimit(newLimit);
+            Console.WriteLine($"Лимит операции успешно изменён на {newLimit:C}");
+            WaitForKey();
+        }
+
+        static void ChangeOwnerName(BankAccount account)
+        {
+            Console.Clear();
+            ValidateAccountExists(account);
+
+            string newName;
+            while (true)
+            {
+                Console.Write("Введите новое имя владельца: ");
+                newName = Console.ReadLine();
+
+                if (string.IsNullOrWhiteSpace(newName))
+                {
+                    Console.WriteLine("ОШИБКА: Имя владельца не может быть пустым!");
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            account.ChangeOwnerName(newName);
+            Console.WriteLine($"Имя владельца успешно изменено на: {newName}");
+            WaitForKey();
+        }
