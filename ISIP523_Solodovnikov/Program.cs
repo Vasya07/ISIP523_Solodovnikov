@@ -180,3 +180,90 @@ namespace UniversityManagement
             return sb.ToString();
         }
     }
+    public class Course
+    {
+        private string _name;
+        private string _description;
+        private int _courseId;
+        private int _credits;
+        private Teacher _teacher;
+        private List<Student> _students;
+
+        public Course(string name, string description, int courseId, int credits)
+        {
+            Name = name;
+            Description = description;
+            CourseId = courseId;
+            Credits = credits;
+            _students = new List<Student>();
+        }
+
+        public string Name
+        {
+            get => _name;
+            set => _name = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Course name cannot be empty");
+        }
+
+        public string Description
+        {
+            get => _description;
+            set => _description = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Description cannot be empty");
+        }
+
+        public int CourseId
+        {
+            get => _courseId;
+            private set => _courseId = value > 0 ? value : throw new ArgumentException("Course ID must be positive");
+        }
+
+        public int Credits
+        {
+            get => _credits;
+            set => _credits = value > 0 && value <= 10 ? value : throw new ArgumentException("Credits must be between 1 and 10");
+        }
+
+        public Teacher Teacher => _teacher;
+        public IReadOnlyList<Student> Students => _students.AsReadOnly();
+
+        public void AssignTeacher(Teacher teacher)
+        {
+            _teacher = teacher;
+        }
+
+        public void AddStudent(Student student)
+        {
+            if (student == null)
+                throw new ArgumentNullException(nameof(student));
+
+            if (!_students.Contains(student))
+            {
+                _students.Add(student);
+            }
+        }
+
+        public string GetCourseInfo()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Course: {Name}");
+            sb.AppendLine($"ID: {CourseId}");
+            sb.AppendLine($"Description: {Description}");
+            sb.AppendLine($"Credits: {Credits}");
+            sb.AppendLine($"Teacher: {(_teacher != null ? _teacher.Name : "Not assigned")}");
+            sb.AppendLine($"Enrolled students: {_students.Count}");
+            return sb.ToString();
+        }
+
+        public string GetStudentsList()
+        {
+            if (_students.Count == 0)
+                return $"No students enrolled in {Name}.";
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"Students enrolled in {Name}:");
+            foreach (var student in _students)
+            {
+                sb.AppendLine($"- {student.Name} (ID: {student.Id})");
+            }
+            return sb.ToString();
+        }
+    }
