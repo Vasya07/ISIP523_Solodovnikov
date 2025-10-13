@@ -267,3 +267,127 @@ namespace UniversityManagement
             return sb.ToString();
         }
     }
+    public class UniversitySystem
+    {
+        private List<Student> _students;
+        private List<Teacher> _teachers;
+        private List<Course> _courses;
+        private int _nextStudentId;
+        private int _nextTeacherId;
+        private int _nextCourseId;
+
+        public UniversitySystem()
+        {
+            _students = new List<Student>();
+            _teachers = new List<Teacher>();
+            _courses = new List<Course>();
+            _nextStudentId = 1;
+            _nextTeacherId = 1;
+            _nextCourseId = 1;
+        }
+
+        public void AddStudent(string name, int age, string contactInfo, string major)
+        {
+            var student = new Student(name, age, contactInfo, _nextStudentId++, major);
+            _students.Add(student);
+        }
+
+        public void AddTeacher(string name, int age, string contactInfo, string department, string specialization)
+        {
+            var teacher = new Teacher(name, age, contactInfo, _nextTeacherId++, department, specialization);
+            _teachers.Add(teacher);
+        }
+
+        public void AddCourse(string name, string description, int credits)
+        {
+            var course = new Course(name, description, _nextCourseId++, credits);
+            _courses.Add(course);
+        }
+
+        public Student GetStudentById(int id)
+        {
+            return _students.FirstOrDefault(s => s.Id == id);
+        }
+
+        public Teacher GetTeacherById(int id)
+        {
+            return _teachers.FirstOrDefault(t => t.Id == id);
+        }
+
+        public Course GetCourseById(int id)
+        {
+            return _courses.FirstOrDefault(c => c.CourseId == id);
+        }
+
+        public void EnrollStudentInCourse(int studentId, int courseId)
+        {
+            var student = GetStudentById(studentId);
+            var course = GetCourseById(courseId);
+
+            if (student == null)
+                throw new ArgumentException("Student not found");
+            if (course == null)
+                throw new ArgumentException("Course not found");
+
+            student.EnrollInCourse(course);
+        }
+
+        public void AssignTeacherToCourse(int teacherId, int courseId)
+        {
+            var teacher = GetTeacherById(teacherId);
+            var course = GetCourseById(courseId);
+
+            if (teacher == null)
+                throw new ArgumentException("Teacher not found");
+            if (course == null)
+                throw new ArgumentException("Course not found");
+
+            teacher.AssignToCourse(course);
+        }
+
+        public IReadOnlyList<Student> GetAllStudents() => _students.AsReadOnly();
+        public IReadOnlyList<Teacher> GetAllTeachers() => _teachers.AsReadOnly();
+        public IReadOnlyList<Course> GetAllCourses() => _courses.AsReadOnly();
+
+        public string GetAllStudentsInfo()
+        {
+            if (_students.Count == 0)
+                return "No students in the system.";
+
+            var sb = new StringBuilder();
+            sb.AppendLine("All Students:");
+            foreach (var student in _students)
+            {
+                sb.AppendLine(student.GetInfo());
+            }
+            return sb.ToString();
+        }
+
+        public string GetAllTeachersInfo()
+        {
+            if (_teachers.Count == 0)
+                return "No teachers in the system.";
+
+            var sb = new StringBuilder();
+            sb.AppendLine("All Teachers:");
+            foreach (var teacher in _teachers)
+            {
+                sb.AppendLine(teacher.GetInfo());
+            }
+            return sb.ToString();
+        }
+
+        public string GetAllCoursesInfo()
+        {
+            if (_courses.Count == 0)
+                return "No courses in the system.";
+
+            var sb = new StringBuilder();
+            sb.AppendLine("All Courses:");
+            foreach (var course in _courses)
+            {
+                sb.AppendLine(course.GetCourseInfo());
+            }
+            return sb.ToString();
+        }
+    }
