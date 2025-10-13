@@ -109,3 +109,74 @@ namespace UniversityManagement
             return sb.ToString();
         }
     }
+    public class Teacher : Person
+    {
+        private string _department;
+        private string _specialization;
+        private List<Course> _coursesTeaching;
+
+        public Teacher(string name, int age, string contactInfo, int id, string department, string specialization)
+            : base(name, age, contactInfo, id)
+        {
+            Department = department;
+            Specialization = specialization;
+            _coursesTeaching = new List<Course>();
+        }
+
+        public string Department
+        {
+            get => _department;
+            set => _department = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Department cannot be empty");
+        }
+
+        public string Specialization
+        {
+            get => _specialization;
+            set => _specialization = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Specialization cannot be empty");
+        }
+
+        public IReadOnlyList<Course> CoursesTeaching => _coursesTeaching.AsReadOnly();
+
+        public void AssignToCourse(Course course)
+        {
+            if (course == null)
+                throw new ArgumentNullException(nameof(course));
+
+            if (!_coursesTeaching.Contains(course))
+            {
+                _coursesTeaching.Add(course);
+                course.AssignTeacher(this);
+            }
+        }
+
+        public override string GetInfo()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Professor: {Name}");
+            sb.AppendLine($"ID: {Id}");
+            sb.AppendLine($"Age: {Age}");
+            sb.AppendLine($"Department: {Department}");
+            sb.AppendLine($"Specialization: {Specialization}");
+            sb.AppendLine($"Contact: {ContactInfo}");
+            return sb.ToString();
+        }
+
+        public override string GetRole()
+        {
+            return "Professor";
+        }
+
+        public string GetTeachingCoursesInfo()
+        {
+            if (_coursesTeaching.Count == 0)
+                return $"{Name} is not teaching any courses.";
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"Courses taught by {Name}:");
+            foreach (var course in _coursesTeaching)
+            {
+                sb.AppendLine($"- {course.Name} (ID: {course.CourseId})");
+            }
+            return sb.ToString();
+        }
+    }
