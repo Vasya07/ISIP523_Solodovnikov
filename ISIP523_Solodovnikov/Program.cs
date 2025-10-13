@@ -429,3 +429,299 @@ namespace UniversityManagement
                         break;
                 }
             }
+            Console.WriteLine("Thank you for using University Management System!");
+        }
+        static void DisplayMainMenu()
+        {
+            Console.WriteLine("\nMain Menu:");
+            Console.WriteLine("1. Manage Students");
+            Console.WriteLine("2. Manage Teachers");
+            Console.WriteLine("3. Manage Courses");
+            Console.WriteLine("4. View All Data");
+            Console.WriteLine("5. Exit");
+            Console.Write("Enter your choice: ");
+        }
+        static void ManageStudents()
+        {
+            bool back = false;
+            while (!back)
+            {
+                Console.WriteLine("\nStudent Management:");
+                Console.WriteLine("1. Add Student");
+                Console.WriteLine("2. View All Students");
+                Console.WriteLine("3. View Student Details");
+                Console.WriteLine("4. Enroll Student in Course");
+                Console.WriteLine("5. Back to Main Menu");
+                Console.Write("Enter your choice: ");
+
+                var choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        AddStudent();
+                        break;
+                    case "2":
+                        Console.WriteLine(_university.GetAllStudentsInfo());
+                        break;
+                    case "3":
+                        ViewStudentDetails();
+                        break;
+                    case "4":
+                        EnrollStudentInCourse();
+                        break;
+                    case "5":
+                        back = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        break;
+                }
+            }
+        }
+
+        static void ManageTeachers()
+        {
+            bool back = false;
+            while (!back)
+            {
+                Console.WriteLine("\nTeacher Management:");
+                Console.WriteLine("1. Add Teacher");
+                Console.WriteLine("2. View All Teachers");
+                Console.WriteLine("3. View Teacher Details");
+                Console.WriteLine("4. Assign Teacher to Course");
+                Console.WriteLine("5. Back to Main Menu");
+                Console.Write("Enter your choice: ");
+
+                var choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        AddTeacher();
+                        break;
+                    case "2":
+                        Console.WriteLine(_university.GetAllTeachersInfo());
+                        break;
+                    case "3":
+                        ViewTeacherDetails();
+                        break;
+                    case "4":
+                        AssignTeacherToCourse();
+                        break;
+                    case "5":
+                        back = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        break;
+                }
+            }
+        }
+
+        static void ManageCourses()
+        {
+            bool back = false;
+            while (!back)
+            {
+                Console.WriteLine("\nCourse Management:");
+                Console.WriteLine("1. Add Course");
+                Console.WriteLine("2. View All Courses");
+                Console.WriteLine("3. View Course Details");
+                Console.WriteLine("4. Back to Main Menu");
+                Console.Write("Enter your choice: ");
+
+                var choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "1":
+                        AddCourse();
+                        break;
+                    case "2":
+                        Console.WriteLine(_university.GetAllCoursesInfo());
+                        break;
+                    case "3":
+                        ViewCourseDetails();
+                        break;
+                    case "4":
+                        back = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice.");
+                        break;
+                }
+            }
+        }
+
+        static void AddStudent()
+        {
+            try
+            {
+                Console.Write("Enter student name: ");
+                var name = Console.ReadLine();
+                Console.Write("Enter age: ");
+                var age = int.Parse(Console.ReadLine());
+                Console.Write("Enter contact info: ");
+                var contact = Console.ReadLine();
+                Console.Write("Enter major: ");
+                var major = Console.ReadLine();
+
+                _university.AddStudent(name, age, contact, major);
+                Console.WriteLine("Student added successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        static void AddTeacher()
+        {
+            try
+            {
+                Console.Write("Enter teacher name: ");
+                var name = Console.ReadLine();
+                Console.Write("Enter age: ");
+                var age = int.Parse(Console.ReadLine());
+                Console.Write("Enter contact info: ");
+                var contact = Console.ReadLine();
+                Console.Write("Enter department: ");
+                var department = Console.ReadLine();
+                Console.Write("Enter specialization: ");
+                var specialization = Console.ReadLine();
+
+                _university.AddTeacher(name, age, contact, department, specialization);
+                Console.WriteLine("Teacher added successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        static void AddCourse()
+        {
+            try
+            {
+                Console.Write("Enter course name: ");
+                var name = Console.ReadLine();
+                Console.Write("Enter course description: ");
+                var description = Console.ReadLine();
+                Console.Write("Enter credits: ");
+                var credits = int.Parse(Console.ReadLine());
+
+                _university.AddCourse(name, description, credits);
+                Console.WriteLine("Course added successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        static void ViewStudentDetails()
+        {
+            Console.Write("Enter student ID: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                var student = _university.GetStudentById(id);
+                if (student != null)
+                {
+                    Console.WriteLine(student.GetInfo());
+                    Console.WriteLine(student.GetCoursesInfo());
+                }
+                else
+                {
+                    Console.WriteLine("Student not found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid ID.");
+            }
+        }
+
+        static void ViewTeacherDetails()
+        {
+            Console.Write("Enter teacher ID: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                var teacher = _university.GetTeacherById(id);
+                if (teacher != null)
+                {
+                    Console.WriteLine(teacher.GetInfo());
+                    Console.WriteLine(teacher.GetTeachingCoursesInfo());
+                }
+                else
+                {
+                    Console.WriteLine("Teacher not found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid ID.");
+            }
+        }
+
+        static void ViewCourseDetails()
+        {
+            Console.Write("Enter course ID: ");
+            if (int.TryParse(Console.ReadLine(), out int id))
+            {
+                var course = _university.GetCourseById(id);
+                if (course != null)
+                {
+                    Console.WriteLine(course.GetCourseInfo());
+                    Console.WriteLine(course.GetStudentsList());
+                }
+                else
+                {
+                    Console.WriteLine("Course not found.");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Invalid ID.");
+            }
+        }
+
+        static void EnrollStudentInCourse()
+        {
+            try
+            {
+                Console.Write("Enter student ID: ");
+                var studentId = int.Parse(Console.ReadLine());
+                Console.Write("Enter course ID: ");
+                var courseId = int.Parse(Console.ReadLine());
+
+                _university.EnrollStudentInCourse(studentId, courseId);
+                Console.WriteLine("Student enrolled successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        static void AssignTeacherToCourse()
+        {
+            try
+            {
+                Console.Write("Enter teacher ID: ");
+                var teacherId = int.Parse(Console.ReadLine());
+                Console.Write("Enter course ID: ");
+                var courseId = int.Parse(Console.ReadLine());
+
+                _university.AssignTeacherToCourse(teacherId, courseId);
+                Console.WriteLine("Teacher assigned successfully!");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+            }
+        }
+
+        static void ViewAllData()
+        {
+            Console.WriteLine("\n" + _university.GetAllStudentsInfo());
+            Console.WriteLine(_university.GetAllTeachersInfo());
+            Console.WriteLine(_university.GetAllCoursesInfo());
+        }
