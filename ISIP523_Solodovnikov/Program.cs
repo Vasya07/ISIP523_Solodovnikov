@@ -5,7 +5,6 @@ using System.Text;
 
 namespace UniversityManagement
 {
-    // Базовый абстрактный класс Person
     public abstract class Person
     {
         private string _name;
@@ -48,4 +47,65 @@ namespace UniversityManagement
         public abstract string GetInfo();
         public abstract string GetRole();
     }
-}
+    public class Student : Person
+    {
+        private string _major;
+        private List<Course> _courses;
+
+        public Student(string name, int age, string contactInfo, int id, string major)
+            : base(name, age, contactInfo, id)
+        {
+            Major = major;
+            _courses = new List<Course>();
+        }
+
+        public string Major
+        {
+            get => _major;
+            set => _major = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Major cannot be empty");
+        }
+
+        public IReadOnlyList<Course> Courses => _courses.AsReadOnly();
+
+        public void EnrollInCourse(Course course)
+        {
+            if (course == null)
+                throw new ArgumentNullException(nameof(course));
+
+            if (!_courses.Contains(course))
+            {
+                _courses.Add(course);
+                course.AddStudent(this);
+            }
+        }
+
+        public override string GetInfo()
+        {
+            var sb = new StringBuilder();
+            sb.AppendLine($"Student: {Name}");
+            sb.AppendLine($"ID: {Id}");
+            sb.AppendLine($"Age: {Age}");
+            sb.AppendLine($"Major: {Major}");
+            sb.AppendLine($"Contact: {ContactInfo}");
+            return sb.ToString();
+        }
+
+        public override string GetRole()
+        {
+            return "Student";
+        }
+
+        public string GetCoursesInfo()
+        {
+            if (_courses.Count == 0)
+                return $"{Name} is not enrolled in any courses.";
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"Courses for {Name}:");
+            foreach (var course in _courses)
+            {
+                sb.AppendLine($"- {course.Name} (ID: {course.CourseId})");
+            }
+            return sb.ToString();
+        }
+    }
