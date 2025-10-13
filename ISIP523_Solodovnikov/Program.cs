@@ -391,3 +391,41 @@ namespace UniversityManagement
             return sb.ToString();
         }
     }
+    class Program
+    {
+        private static UniversitySystem _university = new UniversitySystem();
+
+        static void Main(string[] args)
+        {
+            Console.WriteLine("University Management System");
+
+            InitializeSampleData();
+
+            bool exit = false;
+            while (!exit)
+            {
+                DisplayMainMenu();
+                var choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        ManageStudents();
+                        break;
+                    case "2":
+                        ManageTeachers();
+                        break;
+                    case "3":
+                        ManageCourses();
+                        break;
+                    case "4":
+                        ViewAllData();
+                        break;
+                    case "5":
+                        exit = true;
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice. Please try again.");
+                        break;
+                }
+            }
