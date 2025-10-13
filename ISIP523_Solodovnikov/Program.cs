@@ -435,7 +435,7 @@ namespace UniversityManagement
             Console.WriteLine("1. Управление студентами");
             Console.WriteLine("2. Управление учителями");
             Console.WriteLine("3. Управление курсами");
-            Console.WriteLine("4. Просмотреть все данные");
+            Console.WriteLine("4. Просмотреть всё возможное и невозможное");
             Console.WriteLine("5. Выход");
             Console.Write("Ваш выбор: ");
         }
@@ -457,15 +457,19 @@ namespace UniversityManagement
                 switch (choice)
                 {
                     case "1":
+                        Console.Clear();
                         AddStudent();
                         break;
                     case "2":
+                        Console.Clear();
                         Console.WriteLine(_university.GetAllStudentsInfo());
                         break;
                     case "3":
+                        Console.Clear();
                         ViewStudentDetails();
                         break;
                     case "4":
+                        Console.Clear();
                         EnrollStudentInCourse();
                         break;
                     case "5":
@@ -730,10 +734,11 @@ namespace UniversityManagement
 
         static void ViewAllData()
         {
-            Console.Clear();
             Console.WriteLine("\n" + _university.GetAllStudentsInfo());
             Console.WriteLine(_university.GetAllTeachersInfo());
             Console.WriteLine(_university.GetAllCoursesInfo());
+            Console.WriteLine("Нажмите любую клавишу для продолжения");
+            Console.ReadKey();
         }
         static void InitializeSampleData()
         {
