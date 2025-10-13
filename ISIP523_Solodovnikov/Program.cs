@@ -725,3 +725,22 @@ namespace UniversityManagement
             Console.WriteLine(_university.GetAllTeachersInfo());
             Console.WriteLine(_university.GetAllCoursesInfo());
         }
+        static void InitializeSampleData()
+        {
+            _university.AddStudent("John Smith", 20, "john@email.com", "Computer Science");
+            _university.AddStudent("Emma Johnson", 22, "emma@email.com", "Mathematics");
+            _university.AddTeacher("Dr. Brown", 45, "brown@university.edu", "Computer Science", "Algorithms");
+            _university.AddTeacher("Dr. Wilson", 50, "wilson@university.edu", "Mathematics", "Calculus");
+            _university.AddCourse("Introduction to Programming", "Basic programming concepts", 3);
+            _university.AddCourse("Calculus I", "Differential calculus", 4);
+
+            _university.AssignTeacherToCourse(1, 1);
+            _university.AssignTeacherToCourse(2, 2);
+            _university.EnrollStudentInCourse(1, 1);
+            _university.EnrollStudentInCourse(2, 1);
+            _university.EnrollStudentInCourse(2, 2);
+
+            Console.WriteLine("Sample data initialized successfully!\n");
+        }
+    }
+}
