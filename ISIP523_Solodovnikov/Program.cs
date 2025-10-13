@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Text;
 
 namespace UniversityManagement
 {
@@ -23,25 +20,25 @@ namespace UniversityManagement
         public string Name
         {
             get => _name;
-            set => _name = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Name cannot be empty");
+            set => _name = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("ФИО не может быть пустым!");
         }
 
         public int Age
         {
             get => _age;
-            set => _age = value >= 16 && value <= 100 ? value : throw new ArgumentException("Age must be between 16 and 100");
+            set => _age = value >= 16 && value <= 100 ? value : throw new ArgumentException("Возраст должен быть от 16 до 100 лет!");
         }
 
         public string ContactInfo
         {
             get => _contactInfo;
-            set => _contactInfo = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Contact info cannot be empty");
+            set => _contactInfo = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Адрес электронной почты не может быть пустым!");
         }
 
         public int Id
         {
             get => _id;
-            private set => _id = value > 0 ? value : throw new ArgumentException("ID must be positive");
+            private set => _id = value > 0 ? value : throw new ArgumentException("ID должен быть положительным!");
         }
 
         public abstract string GetInfo();
@@ -62,7 +59,7 @@ namespace UniversityManagement
         public string Major
         {
             get => _major;
-            set => _major = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Major cannot be empty");
+            set => _major = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Курс не может быть пустым!");
         }
 
         public IReadOnlyList<Course> Courses => _courses.AsReadOnly();
@@ -82,11 +79,11 @@ namespace UniversityManagement
         public override string GetInfo()
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"Student: {Name}");
+            sb.AppendLine($"ФИО: {Name}");
             sb.AppendLine($"ID: {Id}");
-            sb.AppendLine($"Age: {Age}");
-            sb.AppendLine($"Major: {Major}");
-            sb.AppendLine($"Contact: {ContactInfo}");
+            sb.AppendLine($"Возраст : {Age}");
+            sb.AppendLine($"На курсе: {Major}");
+            sb.AppendLine($"Адрес электронной почты: {ContactInfo}");
             return sb.ToString();
         }
 
@@ -98,10 +95,10 @@ namespace UniversityManagement
         public string GetCoursesInfo()
         {
             if (_courses.Count == 0)
-                return $"{Name} is not enrolled in any courses.";
+                return $"{Name} не записан ни на какие курсы!";
 
             var sb = new StringBuilder();
-            sb.AppendLine($"Courses for {Name}:");
+            sb.AppendLine($"Курсы для {Name}:");
             foreach (var course in _courses)
             {
                 sb.AppendLine($"- {course.Name} (ID: {course.CourseId})");
@@ -126,13 +123,13 @@ namespace UniversityManagement
         public string Department
         {
             get => _department;
-            set => _department = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Department cannot be empty");
+            set => _department = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Курс не может быть пустым!");
         }
 
         public string Specialization
         {
             get => _specialization;
-            set => _specialization = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Specialization cannot be empty");
+            set => _specialization = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Специализация не может быть пустой!");
         }
 
         public IReadOnlyList<Course> CoursesTeaching => _coursesTeaching.AsReadOnly();
@@ -152,27 +149,27 @@ namespace UniversityManagement
         public override string GetInfo()
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"Professor: {Name}");
+            sb.AppendLine($"ФИО: {Name}");
             sb.AppendLine($"ID: {Id}");
-            sb.AppendLine($"Age: {Age}");
-            sb.AppendLine($"Department: {Department}");
-            sb.AppendLine($"Specialization: {Specialization}");
-            sb.AppendLine($"Contact: {ContactInfo}");
+            sb.AppendLine($"Возраст: {Age}");
+            sb.AppendLine($"Курс: {Department}");
+            sb.AppendLine($"Специализация: {Specialization}");
+            sb.AppendLine($"Адрес электронной почты: {ContactInfo}");
             return sb.ToString();
         }
 
         public override string GetRole()
         {
-            return "Professor";
+            return "ФИО";
         }
 
         public string GetTeachingCoursesInfo()
         {
             if (_coursesTeaching.Count == 0)
-                return $"{Name} is not teaching any courses.";
+                return $"{Name} не преподает никаких курсов";
 
             var sb = new StringBuilder();
-            sb.AppendLine($"Courses taught by {Name}:");
+            sb.AppendLine($"Курсы, проводимые {Name}:");
             foreach (var course in _coursesTeaching)
             {
                 sb.AppendLine($"- {course.Name} (ID: {course.CourseId})");
@@ -201,25 +198,25 @@ namespace UniversityManagement
         public string Name
         {
             get => _name;
-            set => _name = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Course name cannot be empty");
+            set => _name = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Название курса не может быть пустым!");
         }
 
         public string Description
         {
             get => _description;
-            set => _description = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Description cannot be empty");
+            set => _description = !string.IsNullOrWhiteSpace(value) ? value : throw new ArgumentException("Описание не может быть пустым!");
         }
 
         public int CourseId
         {
             get => _courseId;
-            private set => _courseId = value > 0 ? value : throw new ArgumentException("Course ID must be positive");
+            private set => _courseId = value > 0 ? value : throw new ArgumentException("ID курса должен быть положительным!");
         }
 
         public int Credits
         {
             get => _credits;
-            set => _credits = value > 0 && value <= 10 ? value : throw new ArgumentException("Credits must be between 1 and 10");
+            set => _credits = value > 0 && value <= 10 ? value : throw new ArgumentException("Количесвто лет обучения на курсе должно быть от 1 до 10!");
         }
 
         public Teacher Teacher => _teacher;
@@ -244,22 +241,22 @@ namespace UniversityManagement
         public string GetCourseInfo()
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"Course: {Name}");
+            sb.AppendLine($"Курс: {Name}");
             sb.AppendLine($"ID: {CourseId}");
-            sb.AppendLine($"Description: {Description}");
-            sb.AppendLine($"Credits: {Credits}");
-            sb.AppendLine($"Teacher: {(_teacher != null ? _teacher.Name : "Not assigned")}");
-            sb.AppendLine($"Enrolled students: {_students.Count}");
+            sb.AppendLine($"Описание: {Description}");
+            sb.AppendLine($"Количество лет обучения на курсе: {Credits}");
+            sb.AppendLine($"Преподаватель: {(_teacher != null ? _teacher.Name : "Не назначен")}");
+            sb.AppendLine($"Зачисленные студенты: {_students.Count}");
             return sb.ToString();
         }
 
         public string GetStudentsList()
         {
             if (_students.Count == 0)
-                return $"No students enrolled in {Name}.";
+                return $"Нет студентов, обучающихся на курсе {Name}.";
 
             var sb = new StringBuilder();
-            sb.AppendLine($"Students enrolled in {Name}:");
+            sb.AppendLine($"Студенты, обучающиеся на курсе {Name}:");
             foreach (var student in _students)
             {
                 sb.AppendLine($"- {student.Name} (ID: {student.Id})");
@@ -325,9 +322,9 @@ namespace UniversityManagement
             var course = GetCourseById(courseId);
 
             if (student == null)
-                throw new ArgumentException("Student not found");
+                throw new ArgumentException("Студент не найден");
             if (course == null)
-                throw new ArgumentException("Course not found");
+                throw new ArgumentException("Курс не найден");
 
             student.EnrollInCourse(course);
         }
@@ -338,9 +335,9 @@ namespace UniversityManagement
             var course = GetCourseById(courseId);
 
             if (teacher == null)
-                throw new ArgumentException("Teacher not found");
+                throw new ArgumentException("Преподаватель не найден");
             if (course == null)
-                throw new ArgumentException("Course not found");
+                throw new ArgumentException("Курс не найден");
 
             teacher.AssignToCourse(course);
         }
@@ -352,10 +349,10 @@ namespace UniversityManagement
         public string GetAllStudentsInfo()
         {
             if (_students.Count == 0)
-                return "No students in the system.";
+                return "В системе нет студентов";
 
             var sb = new StringBuilder();
-            sb.AppendLine("All Students:");
+            sb.AppendLine("Все студенты:");
             foreach (var student in _students)
             {
                 sb.AppendLine(student.GetInfo());
@@ -366,10 +363,10 @@ namespace UniversityManagement
         public string GetAllTeachersInfo()
         {
             if (_teachers.Count == 0)
-                return "No teachers in the system.";
+                return "В системе нет учителей";
 
             var sb = new StringBuilder();
-            sb.AppendLine("All Teachers:");
+            sb.AppendLine("Все преподаватели:");
             foreach (var teacher in _teachers)
             {
                 sb.AppendLine(teacher.GetInfo());
@@ -380,10 +377,10 @@ namespace UniversityManagement
         public string GetAllCoursesInfo()
         {
             if (_courses.Count == 0)
-                return "No courses in the system.";
+                return "В системе нет курсов";
 
             var sb = new StringBuilder();
-            sb.AppendLine("All Courses:");
+            sb.AppendLine("Все курсы:");
             foreach (var course in _courses)
             {
                 sb.AppendLine(course.GetCourseInfo());
@@ -397,7 +394,8 @@ namespace UniversityManagement
 
         static void Main(string[] args)
         {
-            Console.WriteLine("University Management System");
+            Console.Clear();
+            Console.WriteLine("Система управления университетом");
 
             InitializeSampleData();
 
@@ -425,34 +423,35 @@ namespace UniversityManagement
                         exit = true;
                         break;
                     default:
-                        Console.WriteLine("Invalid choice. Please try again.");
+                        Console.WriteLine("Неверный выбор!");
                         break;
                 }
             }
-            Console.WriteLine("Thank you for using University Management System!");
         }
         static void DisplayMainMenu()
         {
-            Console.WriteLine("\nMain Menu:");
-            Console.WriteLine("1. Manage Students");
-            Console.WriteLine("2. Manage Teachers");
-            Console.WriteLine("3. Manage Courses");
-            Console.WriteLine("4. View All Data");
-            Console.WriteLine("5. Exit");
-            Console.Write("Enter your choice: ");
+            Console.Clear();
+            Console.WriteLine("\nГлавное меню:");
+            Console.WriteLine("1. Управление студентами");
+            Console.WriteLine("2. Управление учителями");
+            Console.WriteLine("3. Управление курсами");
+            Console.WriteLine("4. Просмотреть все данные");
+            Console.WriteLine("5. Выход");
+            Console.Write("Ваш выбор: ");
         }
         static void ManageStudents()
         {
+            Console.Clear();
             bool back = false;
             while (!back)
             {
-                Console.WriteLine("\nStudent Management:");
-                Console.WriteLine("1. Add Student");
-                Console.WriteLine("2. View All Students");
-                Console.WriteLine("3. View Student Details");
-                Console.WriteLine("4. Enroll Student in Course");
-                Console.WriteLine("5. Back to Main Menu");
-                Console.Write("Enter your choice: ");
+                Console.WriteLine("\nУправление студентами:");
+                Console.WriteLine("1. Добавить студента");
+                Console.WriteLine("2. Просмотреть всех студентов");
+                Console.WriteLine("3. Просмотр сведений о студенте");
+                Console.WriteLine("4. Зачислить студента на курс");
+                Console.WriteLine("5. Назад в главное меню");
+                Console.Write("Ваш выбор: ");
 
                 var choice = Console.ReadLine();
                 switch (choice)
@@ -473,7 +472,7 @@ namespace UniversityManagement
                         back = true;
                         break;
                     default:
-                        Console.WriteLine("Invalid choice.");
+                        Console.WriteLine("Неверный выбор!");
                         break;
                 }
             }
@@ -481,16 +480,17 @@ namespace UniversityManagement
 
         static void ManageTeachers()
         {
+            Console.Clear();
             bool back = false;
             while (!back)
             {
-                Console.WriteLine("\nTeacher Management:");
-                Console.WriteLine("1. Add Teacher");
-                Console.WriteLine("2. View All Teachers");
-                Console.WriteLine("3. View Teacher Details");
-                Console.WriteLine("4. Assign Teacher to Course");
-                Console.WriteLine("5. Back to Main Menu");
-                Console.Write("Enter your choice: ");
+                Console.WriteLine("\nУправление преподавателями:");
+                Console.WriteLine("1. Добавить преподавателя");
+                Console.WriteLine("2. Просмотреть всех преподавателей");
+                Console.WriteLine("3. Просмотр сведений о преподавателе");
+                Console.WriteLine("4. Назначить преподавателя на курс");
+                Console.WriteLine("5. Назад в главное меню");
+                Console.Write("Ваш выбор: ");
 
                 var choice = Console.ReadLine();
                 switch (choice)
@@ -511,7 +511,7 @@ namespace UniversityManagement
                         back = true;
                         break;
                     default:
-                        Console.WriteLine("Invalid choice.");
+                        Console.WriteLine("Неверный выбор!");
                         break;
                 }
             }
@@ -519,15 +519,16 @@ namespace UniversityManagement
 
         static void ManageCourses()
         {
+            Console.Clear();
             bool back = false;
             while (!back)
             {
-                Console.WriteLine("\nCourse Management:");
-                Console.WriteLine("1. Add Course");
-                Console.WriteLine("2. View All Courses");
-                Console.WriteLine("3. View Course Details");
-                Console.WriteLine("4. Back to Main Menu");
-                Console.Write("Enter your choice: ");
+                Console.WriteLine("\nУправление курсами:");
+                Console.WriteLine("1. Добавить курс");
+                Console.WriteLine("2. Просмотреть все курсы");
+                Console.WriteLine("3. Просмотреть детали курса");
+                Console.WriteLine("4. Назад в главное меню");
+                Console.Write("Ваш выбор: ");
 
                 var choice = Console.ReadLine();
                 switch (choice)
@@ -545,7 +546,7 @@ namespace UniversityManagement
                         back = true;
                         break;
                     default:
-                        Console.WriteLine("Invalid choice.");
+                        Console.WriteLine("Неверный выбор!");
                         break;
                 }
             }
@@ -553,73 +554,77 @@ namespace UniversityManagement
 
         static void AddStudent()
         {
+            Console.Clear();
             try
             {
-                Console.Write("Enter student name: ");
+                Console.Write("Введите ФИО студента: ");
                 var name = Console.ReadLine();
-                Console.Write("Enter age: ");
+                Console.Write("Введите возраст студента: ");
                 var age = int.Parse(Console.ReadLine());
-                Console.Write("Enter contact info: ");
+                Console.Write("Введите адрес элекронной почты: ");
                 var contact = Console.ReadLine();
-                Console.Write("Enter major: ");
+                Console.Write("Введите название предмета: ");
                 var major = Console.ReadLine();
 
                 _university.AddStudent(name, age, contact, major);
-                Console.WriteLine("Student added successfully!");
+                Console.WriteLine("Студент успешно добавлен!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"ОШИБКА: {ex.Message}");
             }
         }
 
         static void AddTeacher()
         {
+            Console.Clear();
             try
             {
-                Console.Write("Enter teacher name: ");
+                Console.Write("Введите ФИО преподавателя: ");
                 var name = Console.ReadLine();
-                Console.Write("Enter age: ");
+                Console.Write("Введите возраст преподавателя: ");
                 var age = int.Parse(Console.ReadLine());
-                Console.Write("Enter contact info: ");
+                Console.Write("Введите адрес элекронной почты: ");
                 var contact = Console.ReadLine();
-                Console.Write("Enter department: ");
+                Console.Write("Введите название предмета: ");
                 var department = Console.ReadLine();
-                Console.Write("Enter specialization: ");
+                Console.Write("Введите специализацию: ");
                 var specialization = Console.ReadLine();
 
                 _university.AddTeacher(name, age, contact, department, specialization);
-                Console.WriteLine("Teacher added successfully!");
+                Console.WriteLine("Учитель успешно добавлен!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"ОШИБКА: {ex.Message}");
             }
         }
 
         static void AddCourse()
         {
+            Console.Clear();
             try
             {
-                Console.Write("Enter course name: ");
+                Console.Write("Введите название курса: ");
                 var name = Console.ReadLine();
-                Console.Write("Enter course description: ");
+                Console.Write("Введите описание курса: ");
                 var description = Console.ReadLine();
-                Console.Write("Enter credits: ");
+                Console.Write("Введите количество лет обучения на курсе: ");
                 var credits = int.Parse(Console.ReadLine());
 
                 _university.AddCourse(name, description, credits);
-                Console.WriteLine("Course added successfully!");
+                Console.WriteLine("Курс успешно добавлен!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"ОШИБКА: {ex.Message}");
             }
         }
 
         static void ViewStudentDetails()
         {
-            Console.Write("Enter student ID: ");
+            Console.Clear();
+            Console.Write("Введите ID студента: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
                 var student = _university.GetStudentById(id);
@@ -630,18 +635,19 @@ namespace UniversityManagement
                 }
                 else
                 {
-                    Console.WriteLine("Student not found.");
+                    Console.WriteLine("Студент не найден!");
                 }
             }
             else
             {
-                Console.WriteLine("Invalid ID.");
+                Console.WriteLine("Неверный ID!");
             }
         }
 
         static void ViewTeacherDetails()
         {
-            Console.Write("Enter teacher ID: ");
+            Console.Clear();
+            Console.Write("Введите ID преподавателя: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
                 var teacher = _university.GetTeacherById(id);
@@ -652,18 +658,19 @@ namespace UniversityManagement
                 }
                 else
                 {
-                    Console.WriteLine("Teacher not found.");
+                    Console.WriteLine("Преподаватель не найден!");
                 }
             }
             else
             {
-                Console.WriteLine("Invalid ID.");
+                Console.WriteLine("Неверный ID!");
             }
         }
 
         static void ViewCourseDetails()
         {
-            Console.Write("Enter course ID: ");
+            Console.Clear();
+            Console.Write("Введите ID курса: ");
             if (int.TryParse(Console.ReadLine(), out int id))
             {
                 var course = _university.GetCourseById(id);
@@ -674,73 +681,74 @@ namespace UniversityManagement
                 }
                 else
                 {
-                    Console.WriteLine("Course not found.");
+                    Console.WriteLine("Курс не найден!");
                 }
             }
             else
             {
-                Console.WriteLine("Invalid ID.");
+                Console.WriteLine("Неверный ID!");
             }
         }
 
         static void EnrollStudentInCourse()
         {
+            Console.Clear();
             try
             {
-                Console.Write("Enter student ID: ");
+                Console.Write("Введите ID студента: ");
                 var studentId = int.Parse(Console.ReadLine());
-                Console.Write("Enter course ID: ");
+                Console.Write("Введите ID курса: ");
                 var courseId = int.Parse(Console.ReadLine());
 
                 _university.EnrollStudentInCourse(studentId, courseId);
-                Console.WriteLine("Student enrolled successfully!");
+                Console.WriteLine("Студент успешно зачислен!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"ОШИБКА: {ex.Message}");
             }
         }
 
         static void AssignTeacherToCourse()
         {
+            Console.Clear();
             try
             {
-                Console.Write("Enter teacher ID: ");
+                Console.Write("Введите ID преподавателя: ");
                 var teacherId = int.Parse(Console.ReadLine());
-                Console.Write("Enter course ID: ");
+                Console.Write("Введите ID курса: ");
                 var courseId = int.Parse(Console.ReadLine());
 
                 _university.AssignTeacherToCourse(teacherId, courseId);
-                Console.WriteLine("Teacher assigned successfully!");
+                Console.WriteLine("Преподаватель успешно назначен!");
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error: {ex.Message}");
+                Console.WriteLine($"ОШИБКА: {ex.Message}");
             }
         }
 
         static void ViewAllData()
         {
+            Console.Clear();
             Console.WriteLine("\n" + _university.GetAllStudentsInfo());
             Console.WriteLine(_university.GetAllTeachersInfo());
             Console.WriteLine(_university.GetAllCoursesInfo());
         }
         static void InitializeSampleData()
         {
-            _university.AddStudent("John Smith", 20, "john@email.com", "Computer Science");
-            _university.AddStudent("Emma Johnson", 22, "emma@email.com", "Mathematics");
-            _university.AddTeacher("Dr. Brown", 45, "brown@university.edu", "Computer Science", "Algorithms");
-            _university.AddTeacher("Dr. Wilson", 50, "wilson@university.edu", "Mathematics", "Calculus");
-            _university.AddCourse("Introduction to Programming", "Basic programming concepts", 3);
-            _university.AddCourse("Calculus I", "Differential calculus", 4);
+            _university.AddStudent("Солодовников Василий Вячеславович", 18, "vaska@xmail.ru", "Программирование на C#");
+            _university.AddStudent("Кураев Даниил (to be filled by O.E.M)", 19, "daniel@xmail.com", "Анализ Big Data на Python");
+            _university.AddTeacher("Гордов Максим Олегович", 37, "maks@edu.fa.ru", "Программирование на C#", "Программирование");
+            _university.AddTeacher("Горланов Владимир Владимирович", 36, "vladimir@edu.fa.ru", "Анализ Big Data на Python", "Анализ данных");
+            _university.AddCourse("Welcome To The C#", "Базовые концепции программирования", 3);
+            _university.AddCourse("Telemetry on Python", "Базовые концепции анализа Big Data", 4);
 
             _university.AssignTeacherToCourse(1, 1);
             _university.AssignTeacherToCourse(2, 2);
             _university.EnrollStudentInCourse(1, 1);
             _university.EnrollStudentInCourse(2, 1);
             _university.EnrollStudentInCourse(2, 2);
-
-            Console.WriteLine("Sample data initialized successfully!\n");
         }
     }
 }
