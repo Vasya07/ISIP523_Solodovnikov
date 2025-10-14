@@ -606,3 +606,12 @@
             Console.WriteLine("Спасибо за игру!");
         }
     }
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Game game = new Game();
+            game.StartGame();
+        }
+    }
+}
