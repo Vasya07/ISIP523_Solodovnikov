@@ -304,3 +304,37 @@
             Console.WriteLine($"Ход: {TurnCount}");
         }
     }
+    public class Game
+    {
+        private Player player;
+        private Random random;
+        private List<Weapon> availableWeapons;
+        private List<Armor> availableArmors;
+
+        public Game()
+        {
+            player = new Player();
+            random = new Random();
+            InitializeItems();
+        }
+
+        private void InitializeItems()
+        {
+            availableWeapons = new List<Weapon>
+            {
+                new Weapon("Деревянный меч", 3),
+                new Weapon("Железный меч", 8),
+                new Weapon("Стальной меч", 12),
+                new Weapon("Мифрильный меч", 16),
+                new Weapon("Легендарный меч", 20)
+            };
+
+            availableArmors = new List<Armor>
+            {
+                new Armor("Тряпичная броня", 2),
+                new Armor("Кожанная броня", 5),
+                new Armor("Кольчуга", 8),
+                new Armor("Латная броня", 12),
+                new Armor("Драконья броня", 16)
+            };
+        }
