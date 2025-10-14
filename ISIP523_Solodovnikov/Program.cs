@@ -167,7 +167,7 @@
         public override int CalculateDamage(int playerDefense)
         {
             int baseDamage = Math.Max(1, Attack - playerDefense);
-            double critChance = 0.3; // +10% к обычному гоблину
+            double critChance = 0.3;
 
             if (random.NextDouble() < critChance)
             {
@@ -176,5 +176,16 @@
             }
 
             return baseDamage;
+        }
+    }
+    public class Kovalsky : Skeleton
+    {
+        public Kovalsky() : base()
+        {
+            Name = "Ковальский (Босс Скелет)";
+            MaxHP = (int)(MaxHP * 2.5);
+            CurrentHP = MaxHP;
+            Attack = (int)(Attack * 1.3);
+            Defense = (int)(Defense * 1.4);
         }
     }
