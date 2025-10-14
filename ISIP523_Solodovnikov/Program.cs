@@ -1,4 +1,6 @@
-﻿namespace TextRoguelike
+﻿using System.Media;
+
+namespace TextRoguelike
 {
     public abstract class Item
     {
@@ -98,20 +100,25 @@
 
         public override int CalculateDamage(int playerDefense)
         {
-            int baseDamage = Math.Max(1, Attack - playerDefense);
+            // ИСПРАВЛЕНИЕ: Базовая атака без учета защиты
+            int baseDamage = Attack;
+            int finalDamage = Math.Max(1, baseDamage - playerDefense);
 
             if (random.NextDouble() < CRIT_CHANCE)
             {
+
                 Console.WriteLine("Гоблин наносит критический удар!");
-                return (int)(baseDamage * CRIT_MULTIPLIER);
+                SoundPlayer critcial_hint = new("Critical_Hint.wav");
+                critcial_hint.Play();
+                return Math.Max(1, (int)(baseDamage * CRIT_MULTIPLIER) - playerDefense);
             }
 
-            return baseDamage;
+            return finalDamage;
         }
 
         public override string GetSpecialAbility()
         {
-            return "Шанс критического удара (20%)";
+            return "Шанс критического удара - 20%";
         }
     }
 
@@ -150,7 +157,7 @@
 
         public override string GetSpecialAbility()
         {
-            return "Шанс заморозки (25%) - пропуск хода";
+            return "Шанс заморозки - 25% и пропуск хода";
         }
     }
     public class VVG : Goblin
@@ -166,16 +173,19 @@
 
         public override int CalculateDamage(int playerDefense)
         {
-            int baseDamage = Math.Max(1, Attack - playerDefense);
+            int baseDamage = Attack;
+            int finalDamage = Math.Max(1, baseDamage - playerDefense);
             double critChance = 0.3;
 
             if (random.NextDouble() < critChance)
             {
                 Console.WriteLine("ВВГ наносит мощный критический удар!");
-                return (int)(baseDamage * 1.5);
+                SoundPlayer critcial_hint_vvg = new("Critical_Hint.wav");
+                critcial_hint_vvg.Play();
+                return Math.Max(1, (int)(baseDamage * 1.5) - playerDefense);
             }
 
-            return baseDamage;
+            return finalDamage;
         }
     }
     public class Kovalsky : Skeleton
@@ -232,7 +242,7 @@
 
         public override string GetSpecialAbility()
         {
-            return "Игнорирует защиту + шанс заморозки (40%)";
+            return "Игнорирует защиту + шанс заморозки - 40%";
         }
     }
     public class Player : Creature
@@ -241,6 +251,8 @@
         public Armor CurrentArmor { get; private set; }
         public int TurnCount { get; set; }
         public bool IsFrozen { get; set; }
+        public bool HasSecretSword { get; private set; }
+        public bool HasSecretArmor { get; private set; }
 
         private Random random;
 
@@ -249,6 +261,8 @@
             CurrentWeapon = new Weapon("Ржавый меч", 5);
             CurrentArmor = new Armor("Кожанная броня", 3);
             random = new Random();
+            HasSecretSword = false;
+            HasSecretArmor = false;
             UpdateStats();
         }
 
@@ -270,19 +284,88 @@
             UpdateStats();
         }
 
+        public void GiveSecretSword()
+        {
+            if (!HasSecretSword)
+            {
+                Weapon secretSword = new Weapon("МЕЧ БОГОВ", 50);
+                EquipWeapon(secretSword);
+                HasSecretSword = true;
+
+                Console.WriteLine("\nПОЗДРАВЛЯЕМ!!!");
+                Console.WriteLine("Вы достигли 100-го хода и получили СЕКРЕТНЫЙ МЕЧ БОГОВ!");
+                Console.WriteLine("Теперь вы обладаете невероятной силой!");
+
+                Heal(MaxHP);
+            }
+        }
+
+        public void GiveSecretArmor()
+        {
+            if (!HasSecretArmor)
+            {
+                Armor secretArmor = new Armor("БРОНЯ БОГОВ", 40);
+                EquipArmor(secretArmor);
+                HasSecretArmor = true;
+
+                Console.WriteLine("\nПОЗДРАВЛЯЕМ!!!");
+                Console.WriteLine("Вы достигли 200-го хода и получили СЕКРЕТНУЮ БРОНЮ БОГОВ!");
+                Console.WriteLine("Теперь вы практически неуязвимы!");
+
+                Heal(MaxHP);
+            }
+        }
+
+        public void LoseSecretSword()
+        {
+            HasSecretSword = false;
+        }
+
+        public void LoseSecretArmor()
+        {
+            HasSecretArmor = false;
+        }
+
+        public void DeveloperGiveSecretSword()
+        {
+            GiveSecretSword();
+        }
+
+        public void DeveloperGiveSecretArmor()
+        {
+            GiveSecretArmor();
+        }
+
+        public void DeveloperSetTurnCount(int turns)
+        {
+            TurnCount = turns;
+        }
+
         public int CalculateDamage(int enemyDefense)
         {
-            return Math.Max(1, Attack - enemyDefense);
+            int baseDamage = Math.Max(1, Attack - enemyDefense);
+
+            if (HasSecretSword && random.NextDouble() < 0.3)
+            {
+                Console.WriteLine("Меч Богов излучает божественную энергию! Урон удвоен!");
+                return baseDamage * 2;
+            }
+
+            return baseDamage;
         }
 
         public bool TryDodge()
         {
-            return random.NextDouble() < 0.4;
+            double dodgeChance = HasSecretArmor ? 0.6 : 0.4;
+            return random.NextDouble() < dodgeChance;
         }
 
         public int CalculateBlock(int incomingDamage)
         {
-            double blockPercentage = 0.7 + (random.NextDouble() * 0.3);
+            double blockPercentage = HasSecretArmor ?
+                0.8 + (random.NextDouble() * 0.4) :
+                0.7 + (random.NextDouble() * 0.3);
+
             int blockedDamage = (int)(Defense * blockPercentage);
             return Math.Max(0, incomingDamage - blockedDamage);
         }
@@ -290,18 +373,30 @@
         public void UseHealingPotion()
         {
             Heal(MaxHP);
-            Console.WriteLine("Вы использовали лечебное зелье! Здоровье полностью восстановлено.");
+            Console.WriteLine("\nВы использовали лечебное зелье! Здоровье полностью восстановлено");
         }
 
         public override void DisplayStats()
         {
             Console.WriteLine("Игрок");
             Console.WriteLine($"HP: {CurrentHP}/{MaxHP}");
-            Console.Write($"Оружие: "); CurrentWeapon.DisplayStats();
-            Console.Write($"Доспехи: "); CurrentArmor.DisplayStats();
+            Console.Write($"Оружие: ");
+            if (HasSecretSword) Console.Write("✨ ");
+            CurrentWeapon.DisplayStats();
+            Console.Write($"Доспехи: ");
+            if (HasSecretArmor) Console.Write("✨ ");
+            CurrentArmor.DisplayStats();
             Console.WriteLine($"Общая атака: {Attack}");
             Console.WriteLine($"Общая защита: {Defense}");
             Console.WriteLine($"Ход: {TurnCount}");
+
+            if (HasSecretSword || HasSecretArmor)
+            {
+                Console.Write("Обладатель: ");
+                if (HasSecretSword) Console.Write("МЕЧА БОГОВ ");
+                if (HasSecretArmor) Console.Write("БРОНИ БОГОВ");
+                Console.WriteLine("");
+            }
         }
     }
     public class Game
@@ -310,11 +405,13 @@
         private Random random;
         private List<Weapon> availableWeapons;
         private List<Armor> availableArmors;
+        private bool developerMode;
 
         public Game()
         {
             player = new Player();
             random = new Random();
+            developerMode = false;
             InitializeItems();
         }
 
@@ -338,25 +435,151 @@
                 new Armor("Драконья броня", 16)
             };
         }
+
+        private void ShowDeveloperMenu()
+        {
+            Console.WriteLine("\nРежим разработчика");
+            Console.WriteLine("1 - Пропустить до 100-го хода (получить Меч Богов)");
+            Console.WriteLine("2 - Пропустить до 200-го хода (получить Броню Богов)");
+            Console.WriteLine("3 - Установить произвольный уровень");
+            Console.WriteLine("4 - Получить все секретные предметы");
+            Console.WriteLine("5 - Полное восстановление здоровья");
+            Console.WriteLine("6 - Выйти из режима разработчика");
+            Console.WriteLine("0 - Вернуться в игру");
+            Console.Write("Выберите действие: ");
+        }
+
+        private void HandleDeveloperInput()
+        {
+            while (true)
+            {
+                Console.Clear();
+                player.DisplayStats();
+                ShowDeveloperMenu();
+
+                string choice = Console.ReadLine();
+
+                switch (choice)
+                {
+                    case "1":
+                        player.DeveloperSetTurnCount(99);
+                        player.DeveloperGiveSecretSword();
+                        Console.WriteLine("Установлен 100-й ход и выдан Меч Богов!");
+                        break;
+
+                    case "2":
+                        player.DeveloperSetTurnCount(199);
+                        player.DeveloperGiveSecretSword();
+                        player.DeveloperGiveSecretArmor();
+                        Console.WriteLine("Установлен 200-й ход и выданы все секретные предметы!");
+                        break;
+
+                    case "3":
+                        Console.Write("Введите номер хода: ");
+                        if (int.TryParse(Console.ReadLine(), out int turns))
+                        {
+                            player.DeveloperSetTurnCount(turns - 1);
+                            Console.WriteLine($"Установлен {turns}-й ход!");
+
+                            if (turns >= 100 && !player.HasSecretSword)
+                            {
+                                player.DeveloperGiveSecretSword();
+                                Console.WriteLine("Автоматически выдан Меч Богов!");
+                            }
+                            if (turns >= 200 && !player.HasSecretArmor)
+                            {
+                                player.DeveloperGiveSecretArmor();
+                                Console.WriteLine("Автоматически выдана Броня Богов!");
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("Неверный формат числа!");
+                        }
+                        break;
+
+                    case "4":
+                        player.DeveloperGiveSecretSword();
+                        player.DeveloperGiveSecretArmor();
+                        Console.WriteLine("Выданы все секретные предметы!");
+                        break;
+
+                    case "5":
+                        player.Heal(player.MaxHP);
+                        Console.WriteLine("Здоровье полностью восстановлено!");
+                        break;
+
+                    case "6":
+                        developerMode = false;
+                        Console.WriteLine("Режим разработчика отключен!");
+                        return;
+
+                    case "0":
+                        return;
+
+                    default:
+                        Console.WriteLine("Неверный выбор!");
+                        break;
+                }
+
+                Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+                Console.ReadKey();
+            }
+        }
+
+        private string ReadLineWithDeveloperCheck()
+        {
+            string input = Console.ReadLine();
+            if (input?.ToLower() == "d")
+            {
+                developerMode = true;
+                return input;
+            }
+            return input;
+        }
+
         public void StartGame()
         {
             Console.WriteLine("Добро пожаловать в игру! Ваша цель - выживать как можно дольше.");
             Console.WriteLine("Каждый ход вы можете встретить врага или найти сундук.");
             Console.WriteLine("Каждые 10 ходов вас ждёт встреча с боссом!");
-            Console.WriteLine();
+            Console.WriteLine("НА 100 и 200 уровнях Вас ждут награды. Удачи добраться до них!");
+            Console.WriteLine("\nНажмите любую клавишу для старта игры");
+            Console.ReadKey();
+            Console.Clear();
 
             while (player.IsAlive)
             {
                 player.TurnCount++;
                 player.IsFrozen = false;
 
-                Console.WriteLine($"\n--- Ход {player.TurnCount} ---");
+                Console.WriteLine($"\nХод {player.TurnCount}");
                 player.DisplayStats();
                 Console.WriteLine();
 
+                if (player.TurnCount == 100 && !player.HasSecretSword)
+                {
+                    SoundPlayer achievement = new("Secret_Sword.wav");
+                    achievement.Play();
+                    player.GiveSecretSword();
+                    Console.WriteLine("\nНажмите любую клавишу для продолжения");
+                    Console.ReadKey();
+                }
+
+                if (player.TurnCount == 200 && !player.HasSecretArmor)
+                {
+                    SoundPlayer achievement = new("Secret_Armor.wav");
+                    achievement.Play();
+                    player.GiveSecretArmor();
+                    Console.WriteLine("\nНажмите любую клавишу для продолжения");
+                    Console.ReadKey();
+                }
+
                 if (player.TurnCount % 10 == 0)
                 {
-                    Console.WriteLine("ВНИМАНИЕ! Появляется БОСС!");
+                    Console.WriteLine("Внимание, впереди босс!");
+                    SoundPlayer boss_coming = new("Boss_coming.wav");
+                    boss_coming.Play();
                     FightBoss();
                 }
                 else
@@ -373,8 +596,9 @@
 
                 if (player.IsAlive)
                 {
-                    Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+                    Console.WriteLine("\nНажмите любую клавишу для продолжения");
                     Console.ReadKey();
+                    Console.Clear();
                 }
             }
 
@@ -400,10 +624,24 @@
                     if (!enemy.IsAlive) break;
                 }
 
+                if (developerMode)
+                {
+                    HandleDeveloperInput();
+                    if (!developerMode) Console.Clear();
+                    return;
+                }
+
                 EnemyTurn(enemy);
+
+                if (developerMode)
+                {
+                    HandleDeveloperInput();
+                    if (!developerMode) Console.Clear();
+                    return;
+                }
             }
 
-            if (player.IsAlive)
+            if (player.IsAlive && !developerMode)
             {
                 Console.WriteLine($"Вы победили {enemy.Name}!");
             }
@@ -412,7 +650,7 @@
         private void FightBoss()
         {
             Enemy boss = CreateRandomBoss();
-            Console.WriteLine($"ПОЯВИЛСЯ БОСС: {boss.Name}!");
+            Console.WriteLine($"\nПоявился босс: {boss.Name}!");
             boss.DisplayStats();
             Console.WriteLine();
 
@@ -429,12 +667,28 @@
                     if (!boss.IsAlive) break;
                 }
 
+                if (developerMode)
+                {
+                    HandleDeveloperInput();
+                    if (!developerMode) Console.Clear();
+                    return;
+                }
+
                 EnemyTurn(boss);
+
+                if (developerMode)
+                {
+                    HandleDeveloperInput();
+                    if (!developerMode) Console.Clear();
+                    return;
+                }
             }
 
-            if (player.IsAlive)
+            if (player.IsAlive && !developerMode)
             {
                 Console.WriteLine($"Невероятно! Вы победили {boss.Name}!");
+                SoundPlayer boss_win = new(@"Boss_Win.wav");
+                boss_win.Play();
             }
         }
 
@@ -445,7 +699,14 @@
             Console.WriteLine("2 - Защищаться");
             Console.Write("Выберите действие: ");
 
-            string choice = Console.ReadLine();
+            string choice = ReadLineWithDeveloperCheck();
+
+            if (developerMode)
+            {
+                HandleDeveloperInput();
+                if (!developerMode) Console.Clear();
+                return;
+            }
 
             switch (choice)
             {
@@ -456,7 +717,7 @@
                     break;
 
                 case "2":
-                    Console.WriteLine("Вы готовитесь к защите...");
+                    Console.WriteLine("Вы готовитесь к защите");
                     break;
 
                 default:
@@ -469,7 +730,7 @@
         {
             if (!enemy.IsAlive) return;
 
-            Console.WriteLine($"\n--- Ход {enemy.Name} ---");
+            Console.WriteLine($"\nХод {enemy.Name}");
 
             bool isDefending = false;
             int damageToPlayer = 0;
@@ -478,7 +739,7 @@
             {
                 if (mage.TryFreeze())
                 {
-                    Console.WriteLine("Маг замораживает вас! Вы пропустите следующий ход.");
+                    Console.WriteLine("Маг замораживает вас! Вы пропустите следующий ход");
                     player.IsFrozen = true;
                 }
                 damageToPlayer = mage.CalculateDamage(player.Defense);
@@ -487,7 +748,7 @@
             {
                 if (pestov.TryFreeze())
                 {
-                    Console.WriteLine("Пестов С-- замораживает вас! Вы пропустите следующий ход.");
+                    Console.WriteLine("Пестов С-- замораживает вас! Вы пропустите следующий ход");
                     player.IsFrozen = true;
                 }
                 damageToPlayer = pestov.CalculateDamage(player.Defense);
@@ -496,7 +757,7 @@
             {
                 if (archmage.TryFreeze())
                 {
-                    Console.WriteLine("Архимаг C++ замораживает вас! Вы пропустите следующий ход.");
+                    Console.WriteLine("Архимаг C++ замораживает вас! Вы пропустите следующий ход");
                     player.IsFrozen = true;
                 }
                 damageToPlayer = archmage.CalculateDamage(player.Defense);
@@ -528,6 +789,159 @@
             }
         }
 
+        private void OpenChest()
+        {
+            SoundPlayer chest = new("Chest.wav");
+            Console.WriteLine("Вы нашли сундук!");
+
+            int itemType = random.Next(3);
+            chest.PlayLooping();
+
+            switch (itemType)
+            {
+                case 0:
+                    Console.WriteLine("В сундуке лечебное зелье!");
+                    player.UseHealingPotion();
+                    break;
+
+                case 1:
+                    Weapon newWeapon = availableWeapons[random.Next(availableWeapons.Count)];
+                    Console.WriteLine($"\nВ сундуке оружие: ");
+                    newWeapon.DisplayStats();
+                    Console.WriteLine($"\nВаше текущее оружие: ");
+                    player.CurrentWeapon.DisplayStats();
+
+                    if (player.HasSecretSword)
+                    {
+                        Console.WriteLine("\nВнимание! У вас есть МЕЧ БОГОВ!");
+                        Console.Write("Вы уверены, что хотите расстаться с секретным оружием? (y/n): ");
+
+                        string confirmation = ReadLineWithDeveloperCheck();
+
+                        if (developerMode)
+                        {
+                            HandleDeveloperInput();
+                            chest.Stop();
+                            if (!developerMode) Console.Clear();
+                            return;
+                        }
+
+                        if (confirmation.ToLower() != "y")
+                        {
+                            Console.WriteLine("Вы оставили новое оружие в сундуке");
+                            break;
+                        }
+                    }
+
+                    Console.Write("\nВзять новое оружие? (y/n): ");
+
+                    string weaponChoice = ReadLineWithDeveloperCheck();
+
+                    if (developerMode)
+                    {
+                        HandleDeveloperInput();
+                        chest.Stop();
+                        if (!developerMode) Console.Clear();
+                        return;
+                    }
+
+                    if (weaponChoice.ToLower() == "y")
+                    {
+                        player.EquipWeapon(newWeapon);
+                        Console.WriteLine("\nВы экипировали новое оружие!");
+                        if (player.HasSecretSword && newWeapon.Attack < 50)
+                        {
+                            player.LoseSecretSword();
+                            Console.WriteLine("Вы потеряли МЕЧ БОГОВ!");
+                        }
+                    }
+                    break;
+
+                case 2:
+                    Armor newArmor = availableArmors[random.Next(availableArmors.Count)];
+                    Console.WriteLine($"\nВ сундуке доспехи: ");
+                    newArmor.DisplayStats();
+                    Console.WriteLine($"\nВаши текущие доспехи: ");
+                    player.CurrentArmor.DisplayStats();
+
+                    if (player.HasSecretArmor)
+                    {
+                        Console.WriteLine("\nВнимание! У вас есть БРОНЯ БОГОВ!");
+                        Console.Write("Вы уверены, что хотите расстаться с секретной бронёй? (y/n): ");
+
+                        string confirmation = ReadLineWithDeveloperCheck();
+
+                        if (developerMode)
+                        {
+                            HandleDeveloperInput();
+                            chest.Stop();
+                            if (!developerMode) Console.Clear();
+                            return;
+                        }
+
+                        if (confirmation.ToLower() != "y")
+                        {
+                            Console.WriteLine("Вы оставили новые доспехи в сундуке");
+                            break;
+                        }
+                    }
+
+                    Console.Write("\nВзять новые доспехи? (y/n): ");
+
+                    string armorChoice = ReadLineWithDeveloperCheck();
+
+                    if (developerMode)
+                    {
+                        HandleDeveloperInput();
+                        chest.Stop();
+                        if (!developerMode) Console.Clear();
+                        return;
+                    }
+
+                    if (armorChoice.ToLower() == "y")
+                    {
+                        player.EquipArmor(newArmor);
+                        Console.WriteLine("\nВы экипировали новые доспехи!");
+                        if (player.HasSecretArmor && newArmor.Defense < 40)
+                        {
+                            player.LoseSecretArmor();
+                            Console.WriteLine("Вы потеряли БРОНЮ БОГОВ!");
+                        }
+                    }
+                    break;
+            }
+            chest.Stop();
+        }
+
+        private void GameOver()
+        {
+            Console.WriteLine("\nИгра окончена");
+            Console.WriteLine($"Вы продержались {player.TurnCount} ходов");
+
+            if (player.HasSecretSword && player.HasSecretArmor)
+            {
+                Console.WriteLine("Вы получили И МЕЧ БОГОВ И БРОНЮ БОГОВ!");
+            }
+            else if (player.HasSecretSword)
+            {
+                Console.WriteLine("Вы получили МЕЧ БОГОВ!");
+            }
+            else if (player.HasSecretArmor)
+            {
+                Console.WriteLine("Вы получили БРОНЮ БОГОВ!");
+            }
+            else if (player.TurnCount >= 190)
+            {
+                Console.WriteLine("Отличный результат! Вы почти достигли легендарной брони!");
+            }
+            else if (player.TurnCount >= 90)
+            {
+                Console.WriteLine("Хороший результат! Вы почти достигли легендарного меча!");
+            }
+
+            Console.WriteLine("Спасибо за игру!");
+        }
+
         private Enemy CreateRandomEnemy()
         {
             int enemyType = random.Next(3);
@@ -554,58 +968,8 @@
                 _ => new VVG()
             };
         }
-
-        private void OpenChest()
-        {
-            Console.WriteLine("Вы нашли сундук!");
-            int itemType = random.Next(3);
-
-            switch (itemType)
-            {
-                case 0:
-                    Console.WriteLine("В сундуке лечебное зелье!");
-                    player.UseHealingPotion();
-                    break;
-
-                case 1:
-                    Weapon newWeapon = availableWeapons[random.Next(availableWeapons.Count)];
-                    Console.WriteLine($"В сундуке оружие: ");
-                    newWeapon.DisplayStats();
-                    Console.WriteLine($"Ваше текущее оружие: ");
-                    player.CurrentWeapon.DisplayStats();
-
-                    Console.Write("Взять новое оружие? (y/n): ");
-                    if (Console.ReadLine().ToLower() == "y")
-                    {
-                        player.EquipWeapon(newWeapon);
-                        Console.WriteLine("Вы экипировали новое оружие!");
-                    }
-                    break;
-
-                case 2:
-                    Armor newArmor = availableArmors[random.Next(availableArmors.Count)];
-                    Console.WriteLine($"В сундуке доспехи: ");
-                    newArmor.DisplayStats();
-                    Console.WriteLine($"Ваши текущие доспехи: ");
-                    player.CurrentArmor.DisplayStats();
-
-                    Console.Write("Взять новые доспехи? (y/n): ");
-                    if (Console.ReadLine().ToLower() == "y")
-                    {
-                        player.EquipArmor(newArmor);
-                        Console.WriteLine("Вы экипировали новые доспехи!");
-                    }
-                    break;
-            }
-        }
-
-        private void GameOver()
-        {
-            Console.WriteLine("\n=== ИГРА ОКОНЧЕНА ===");
-            Console.WriteLine($"Вы продержались {player.TurnCount} ходов");
-            Console.WriteLine("Спасибо за игру!");
-        }
     }
+
     class Program
     {
         static void Main(string[] args)
