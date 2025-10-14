@@ -235,3 +235,72 @@
             return "Игнорирует защиту + шанс заморозки (40%)";
         }
     }
+    public class Player : Creature
+    {
+        public Weapon CurrentWeapon { get; private set; }
+        public Armor CurrentArmor { get; private set; }
+        public int TurnCount { get; set; }
+        public bool IsFrozen { get; set; }
+
+        private Random random;
+
+        public Player() : base("Игрок", 100, 10, 5)
+        {
+            CurrentWeapon = new Weapon("Ржавый меч", 5);
+            CurrentArmor = new Armor("Кожанная броня", 3);
+            random = new Random();
+            UpdateStats();
+        }
+
+        private void UpdateStats()
+        {
+            Attack = 10 + CurrentWeapon.Attack;
+            Defense = 5 + CurrentArmor.Defense;
+        }
+
+        public void EquipWeapon(Weapon newWeapon)
+        {
+            CurrentWeapon = newWeapon;
+            UpdateStats();
+        }
+
+        public void EquipArmor(Armor newArmor)
+        {
+            CurrentArmor = newArmor;
+            UpdateStats();
+        }
+
+        public int CalculateDamage(int enemyDefense)
+        {
+            return Math.Max(1, Attack - enemyDefense);
+        }
+
+        public bool TryDodge()
+        {
+            return random.NextDouble() < 0.4;
+        }
+
+        public int CalculateBlock(int incomingDamage)
+        {
+            double blockPercentage = 0.7 + (random.NextDouble() * 0.3);
+            int blockedDamage = (int)(Defense * blockPercentage);
+            return Math.Max(0, incomingDamage - blockedDamage);
+        }
+
+        public void UseHealingPotion()
+        {
+            Heal(MaxHP);
+            Console.WriteLine("Вы использовали лечебное зелье! Здоровье полностью восстановлено.");
+        }
+
+        public override void DisplayStats()
+        {
+            Console.WriteLine("Игрок");
+            Console.WriteLine($"HP: {CurrentHP}/{MaxHP}");
+            Console.Write($"Оружие: "); CurrentWeapon.DisplayStats();
+            Console.Write($"Доспехи: "); CurrentArmor.DisplayStats();
+            Console.WriteLine($"Общая атака: {Attack}");
+            Console.WriteLine($"Общая защита: {Defense}");
+            Console.WriteLine($"Ход: {TurnCount}");
+        }
+    }
