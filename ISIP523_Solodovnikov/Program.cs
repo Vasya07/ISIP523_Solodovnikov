@@ -89,3 +89,67 @@
         public abstract int CalculateDamage(int playerDefense);
         public abstract string GetSpecialAbility();
     }
+    public class Goblin : Enemy
+    {
+        private const double CRIT_CHANCE = 0.2;
+        private const double CRIT_MULTIPLIER = 1.5;
+
+        public Goblin() : base("Гоблин", 30, 8, 3) { }
+
+        public override int CalculateDamage(int playerDefense)
+        {
+            int baseDamage = Math.Max(1, Attack - playerDefense);
+
+            if (random.NextDouble() < CRIT_CHANCE)
+            {
+                Console.WriteLine("Гоблин наносит критический удар!");
+                return (int)(baseDamage * CRIT_MULTIPLIER);
+            }
+
+            return baseDamage;
+        }
+
+        public override string GetSpecialAbility()
+        {
+            return "Шанс критического удара (20%)";
+        }
+    }
+
+    public class Skeleton : Enemy
+    {
+        public Skeleton() : base("Скелет", 35, 7, 4) { }
+
+        public override int CalculateDamage(int playerDefense)
+        {
+            Console.WriteLine("Скелет игнорирует вашу защиту!");
+            return Attack;
+        }
+
+        public override string GetSpecialAbility()
+        {
+            return "Игнорирует защиту игрока";
+        }
+    }
+
+    public class Mage : Enemy
+    {
+        private const double FREEZE_CHANCE = 0.25;
+
+        public Mage() : base("Маг", 25, 10, 2) { }
+
+        public override int CalculateDamage(int playerDefense)
+        {
+            int damage = Math.Max(1, Attack - playerDefense);
+            return damage;
+        }
+
+        public bool TryFreeze()
+        {
+            return random.NextDouble() < FREEZE_CHANCE;
+        }
+
+        public override string GetSpecialAbility()
+        {
+            return "Шанс заморозки (25%) - пропуск хода";
+        }
+    }
