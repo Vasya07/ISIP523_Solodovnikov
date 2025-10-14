@@ -153,3 +153,28 @@
             return "Шанс заморозки (25%) - пропуск хода";
         }
     }
+    public class VVG : Goblin
+    {
+        public VVG() : base()
+        {
+            Name = "ВВГ (Босс Гоблин)";
+            MaxHP = (int)(MaxHP * 2.0);
+            CurrentHP = MaxHP;
+            Attack = (int)(Attack * 1.5);
+            Defense = (int)(Defense * 1.2);
+        }
+
+        public override int CalculateDamage(int playerDefense)
+        {
+            int baseDamage = Math.Max(1, Attack - playerDefense);
+            double critChance = 0.3; // +10% к обычному гоблину
+
+            if (random.NextDouble() < critChance)
+            {
+                Console.WriteLine("ВВГ наносит мощный критический удар!");
+                return (int)(baseDamage * 1.5);
+            }
+
+            return baseDamage;
+        }
+    }
