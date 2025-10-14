@@ -189,3 +189,13 @@
             Defense = (int)(Defense * 1.4);
         }
     }
+    public class ArchmageCPP : Mage
+    {
+        public ArchmageCPP() : base()
+        {
+            Name = "Архимаг C++ (Босс Маг)";
+            MaxHP = (int)(MaxHP * 1.8);
+            CurrentHP = MaxHP;
+            Attack = (int)(Attack * 1.6);
+            Defense = (int)(Defense * 1.1);
+        }
