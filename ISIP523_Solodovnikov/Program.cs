@@ -380,10 +380,10 @@ namespace TextRoguelike
             Console.WriteLine("Игрок");
             Console.WriteLine($"HP: {CurrentHP}/{MaxHP}");
             Console.Write($"Оружие: ");
-            if (HasSecretSword) Console.Write("✨ ");
+            if (HasSecretSword) Console.Write("");
             CurrentWeapon.DisplayStats();
             Console.Write($"Доспехи: ");
-            if (HasSecretArmor) Console.Write("✨ ");
+            if (HasSecretArmor) Console.Write("");
             CurrentArmor.DisplayStats();
             Console.WriteLine($"Общая атака: {Attack}");
             Console.WriteLine($"Общая защита: {Defense}");
