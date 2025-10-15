@@ -100,7 +100,6 @@ namespace TextRoguelike
 
         public override int CalculateDamage(int playerDefense)
         {
-            // ИСПРАВЛЕНИЕ: Базовая атака без учета защиты
             int baseDamage = Attack;
             int finalDamage = Math.Max(1, baseDamage - playerDefense);
 
@@ -445,7 +444,6 @@ namespace TextRoguelike
             Console.WriteLine("4 - Получить все секретные предметы");
             Console.WriteLine("5 - Полное восстановление здоровья");
             Console.WriteLine("6 - Выйти из режима разработчика");
-            Console.WriteLine("0 - Вернуться в игру");
             Console.Write("Выберите действие: ");
         }
 
@@ -514,15 +512,12 @@ namespace TextRoguelike
                         Console.WriteLine("Режим разработчика отключен!");
                         return;
 
-                    case "0":
-                        return;
-
                     default:
                         Console.WriteLine("Неверный выбор!");
                         break;
                 }
 
-                Console.WriteLine("\nНажмите любую клавишу для продолжения...");
+                Console.WriteLine("\nНажмите любую клавишу для продолжения");
                 Console.ReadKey();
             }
         }
@@ -643,6 +638,8 @@ namespace TextRoguelike
 
             if (player.IsAlive && !developerMode)
             {
+                SoundPlayer win = new("Enemy_Win.wav");
+                win.Play();
                 Console.WriteLine($"Вы победили {enemy.Name}!");
             }
         }
