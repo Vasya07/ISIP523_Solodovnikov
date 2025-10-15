@@ -1,0 +1,49 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "ISIP523_Solodovnikov/1.0.0": {
+        "dependencies": {
+          "System.Windows.Extensions": "9.0.10"
+        },
+        "runtime": {
+          "ISIP523_Solodovnikov.dll": {}
+        }
+      },
+      "System.Windows.Extensions/9.0.10": {
+        "runtime": {
+          "lib/net8.0/System.Windows.Extensions.dll": {
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.1025.47515"
+          }
+        },
+        "runtimeTargets": {
+          "runtimes/win/lib/net8.0/System.Windows.Extensions.dll": {
+            "rid": "win",
+            "assetType": "runtime",
+            "assemblyVersion": "9.0.0.0",
+            "fileVersion": "9.0.1025.47515"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ISIP523_Solodovnikov/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "System.Windows.Extensions/9.0.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-6I+OzjcTx2gtZotjDQXEhWdkfPVxRvT9r9nFWsgt9Of6GwLt9szpIlxx0z2dP3dprg6K3zRU/5bbig+zoVKpfg==",
+      "path": "system.windows.extensions/9.0.10",
+      "hashPath": "system.windows.extensions.9.0.10.nupkg.sha512"
+    }
+  }
+}
