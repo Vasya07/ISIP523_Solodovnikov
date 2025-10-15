@@ -438,8 +438,8 @@ namespace TextRoguelike
         private void ShowDeveloperMenu()
         {
             Console.WriteLine("\nРежим разработчика");
-            Console.WriteLine("1 - Пропустить до 100-го хода (получить Меч Богов)");
-            Console.WriteLine("2 - Пропустить до 200-го хода (получить Броню Богов)");
+            Console.WriteLine("1 - Пропустить до 99-го хода (получить Меч Богов)");
+            Console.WriteLine("2 - Пропустить до 199-го хода (получить Броню Богов)");
             Console.WriteLine("3 - Установить произвольный уровень");
             Console.WriteLine("4 - Получить все секретные предметы");
             Console.WriteLine("5 - Полное восстановление здоровья");
@@ -461,15 +461,12 @@ namespace TextRoguelike
                 {
                     case "1":
                         player.DeveloperSetTurnCount(99);
-                        player.DeveloperGiveSecretSword();
-                        Console.WriteLine("Установлен 100-й ход и выдан Меч Богов!");
+                        Console.WriteLine("Установлен 99-й ход");
                         break;
 
                     case "2":
                         player.DeveloperSetTurnCount(199);
-                        player.DeveloperGiveSecretSword();
-                        player.DeveloperGiveSecretArmor();
-                        Console.WriteLine("Установлен 200-й ход и выданы все секретные предметы!");
+                        Console.WriteLine("Установлен 199-й ход");
                         break;
 
                     case "3":
