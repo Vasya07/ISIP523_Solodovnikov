@@ -109,7 +109,7 @@ namespace TextRoguelike
                 Console.WriteLine("Гоблин наносит критический удар!");
                 SoundPlayer critcial_hint = new("Critical_Hint.wav");
                 critcial_hint.Play();
-                return Math.Max(1, (int)(baseDamage * CRIT_MULTIPLIER) - playerDefense);
+                return Math.Max(1, (int)(baseDamage * CRIT_MULTIPLIER);
             }
 
             return finalDamage;
@@ -181,7 +181,7 @@ namespace TextRoguelike
                 Console.WriteLine("ВВГ наносит мощный критический удар!");
                 SoundPlayer critcial_hint_vvg = new("Critical_Hint.wav");
                 critcial_hint_vvg.Play();
-                return Math.Max(1, (int)(baseDamage * 1.5) - playerDefense);
+                return Math.Max(1, (int)(baseDamage * 1.5);
             }
 
             return finalDamage;
