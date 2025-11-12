@@ -28,3 +28,5 @@
 /ISIP523_Solodovnikov/obj
 /ISIP523_Solodovnikov/bin/Debug/net8.0
 /.vs/ISIP523_Solodovnikov/FileContentIndex
+/.vs/slnx.sqlite
+/ISIP523_Solodovnikov/bin/Release/net8.0/windowsdesktop-runtime-8.0.21-win-x64.exe
