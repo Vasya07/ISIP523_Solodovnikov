@@ -41,7 +41,6 @@ namespace TextRoguelike
                 new Armor("Драконья броня", 16)
             };
         }
-
         private void ShowDeveloperMenu()
         {
             Console.WriteLine("\nРежим разработчика");
@@ -50,7 +49,9 @@ namespace TextRoguelike
             Console.WriteLine("3 - Пропустить до 499-го хода (получить +100 HP)");
             Console.WriteLine("4 - Пропустить до 749-го хода (получить +200 HP)");
             Console.WriteLine("5 - Полное восстановление здоровья");
-            Console.WriteLine("6 - Выйти из режима разработчика");
+            Console.WriteLine("6 - Выиграть игру (установить 1000 уровень)");
+            Console.WriteLine("7 - Проиграть игру (установить 0 HP)");
+            Console.WriteLine("8 - Выйти из режима разработчика");
             Console.Write("Выберите действие: ");
         }
 
@@ -92,6 +93,16 @@ namespace TextRoguelike
                         break;
 
                     case "6":
+                        player.DeveloperSetTurnCount(9999);
+                        Console.WriteLine("Установлен 1000-й ход - ПОБЕДА!");
+                        break;
+
+                    case "7":
+                        player.TakeDamage(player.CurrentHP);
+                        Console.WriteLine("Здоровье установлено на 0");
+                        break;
+
+                    case "8":
                         developerMode = false;
                         Console.WriteLine("Режим разработчика отключен!");
                         return;
@@ -123,6 +134,7 @@ namespace TextRoguelike
             Console.WriteLine("Каждый ход вы можете встретить врага или найти сундук.");
             Console.WriteLine("Каждые 10 ходов вас ждёт встреча с боссом!");
             Console.WriteLine("На 100, 250, 500 и 750 уровнях Вас ждут особыем награды");
+            Console.WriteLine("Всего в игре 10000 уровней");
             Console.WriteLine("\nНажмите любую клавишу для старта игры");
             Console.ReadKey();
             Console.Clear();
@@ -135,6 +147,12 @@ namespace TextRoguelike
                 Console.WriteLine($"\nХод {player.TurnCount}");
                 player.DisplayStats();
                 Console.WriteLine();
+
+                if (player.TurnCount >= 10000)
+                {
+                    WinGame();
+                    return;
+                }
 
                 player.CheckMilestoneRewards(player.TurnCount);
 
@@ -449,12 +467,32 @@ namespace TextRoguelike
 
         private void GameOver()
         {
-            Console.WriteLine("\nИгра окончена");
-            Console.WriteLine($"Вы продержались {player.TurnCount} ходов");
-            Console.WriteLine("Спасибо за игру!");
-            SoundPlayer lose_game = new SoundPlayer("Sounds/Lose.wav");
-            lose_game.Play();
+            if (player.TurnCount < 1000)
+            {
+                Console.WriteLine("\nИгра окончена");
+                Console.WriteLine($"Вы продержались {player.TurnCount} ходов");
+                Console.WriteLine("Спасибо за игру!");
+                SoundPlayer lose_game = new("Sounds/Lose.wav");
+                lose_game.Play();
+            }
+
             Console.WriteLine("Нажмите любую клавишу для выхода");
+            Console.ReadKey();
+        }
+        private void WinGame()
+        {
+            Console.Clear();
+            SoundPlayer winSound = new("Sounds/Game_Win.wav");
+            winSound.Play();
+            Console.WriteLine("ПОБЕДА!!!");
+            Thread.Sleep(2000);
+            Console.Write($"Вы достигли");
+            Thread.Sleep(500);
+            Console.Write($" {player.TurnCount} уровня и прошли игру!\n");
+            Thread.Sleep(2000);
+            Console.WriteLine("Спасибо за игру!");
+
+            Console.WriteLine("\nНажмите любую клавишу для выхода");
             Console.ReadKey();
         }
 

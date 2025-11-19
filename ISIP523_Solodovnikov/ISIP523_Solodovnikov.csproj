@@ -120,6 +120,15 @@
     <None Update="Sounds\Enemy_Win.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Sounds\Game_Wijn.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sounds\Game_Win.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Sounds\Lose.wav">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Sounds\Secret_Armor.wav">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

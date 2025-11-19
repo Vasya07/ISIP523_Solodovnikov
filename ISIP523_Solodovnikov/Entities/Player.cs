@@ -144,5 +144,9 @@ namespace TextRoguelike.Entities
                 Console.WriteLine("Обладатель МЕЧА БОГОВ (враги усилены)");
             }
         }
+        public void SetHP(int hp)
+        {
+            CurrentHP = Math.Max(0, Math.Min(hp, MaxHP));
+        }
     }
 }
