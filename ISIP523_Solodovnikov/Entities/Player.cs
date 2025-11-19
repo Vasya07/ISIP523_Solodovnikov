@@ -51,7 +51,7 @@ namespace TextRoguelike.Entities
                     IncreaseMaxHP(100, "300_HP.wav");
                     break;
                 case 750:
-                    IncreaseMaxHP(200, "Max_HP.wav");
+                    IncreaseMaxHP(200, "500_HP.wav");
                     break;
             }
         }
@@ -66,8 +66,8 @@ namespace TextRoguelike.Entities
             Console.WriteLine($"Максимальное HP повышено: {oldMaxHP} -> {MaxHP}");
             Console.WriteLine("Здоровье полностью восстановлено!");
 
-            System.Media.SoundPlayer achievement = new($"Sounds/{soundFile}");
-            achievement.Play();
+            System.Media.SoundPlayer increase_hp = new($"Sounds/{soundFile}");
+            increase_hp.Play();
         }
 
         private void GiveGodSword()
@@ -129,7 +129,7 @@ namespace TextRoguelike.Entities
                 Console.Write("Достижения: ");
                 if (MaxHP >= 200) Console.Write("Уровень 100 ");
                 if (MaxHP >= 300) Console.Write("Уровень 500 ");
-                if (MaxHP >= 400) Console.Write("Уровень 750");
+                if (MaxHP >= 500) Console.Write("Уровень 750");
                 Console.WriteLine("");
             }
         }
