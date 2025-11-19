@@ -8,8 +8,6 @@ namespace TextRoguelike.Entities
         public Armor CurrentArmor { get; private set; }
         public int TurnCount { get; set; }
         public bool IsFrozen { get; set; }
-        public bool HasSecretSword { get; private set; }
-        public bool HasSecretArmor { get; private set; }
 
         private Random random;
 
@@ -18,8 +16,6 @@ namespace TextRoguelike.Entities
             CurrentWeapon = new Weapon("Ржавый меч", 5);
             CurrentArmor = new Armor("Кожанная броня", 3);
             random = new Random();
-            HasSecretSword = false;
-            HasSecretArmor = false;
             UpdateStats();
         }
 
@@ -41,56 +37,50 @@ namespace TextRoguelike.Entities
             UpdateStats();
         }
 
-        public void GiveSecretSword()
+        public void CheckMilestoneRewards(int turnCount)
         {
-            if (!HasSecretSword)
+            switch (turnCount)
             {
-                Weapon secretSword = new Weapon("МЕЧ БОГОВ", 50);
-                EquipWeapon(secretSword);
-                HasSecretSword = true;
-
-                Console.WriteLine("\nПОЗДРАВЛЯЕМ!!!");
-                Console.WriteLine("Вы достигли 100-го хода и получили СЕКРЕТНЫЙ МЕЧ БОГОВ!");
-                Console.WriteLine("Теперь вы обладаете невероятной силой!");
-
-                Heal(MaxHP);
+                case 100:
+                    IncreaseMaxHP(100, "200_HP.wav");
+                    break;
+                case 250:
+                    GiveGodSword();
+                    break;
+                case 500:
+                    IncreaseMaxHP(100, "300_HP.wav");
+                    break;
+                case 750:
+                    IncreaseMaxHP(200, "Max_HP.wav");
+                    break;
             }
         }
 
-        public void GiveSecretArmor()
+        private void IncreaseMaxHP(int amount, string soundFile)
         {
-            if (!HasSecretArmor)
-            {
-                Armor secretArmor = new Armor("БРОНЯ БОГОВ", 40);
-                EquipArmor(secretArmor);
-                HasSecretArmor = true;
+            int oldMaxHP = MaxHP;
+            MaxHP += amount;
+            CurrentHP = MaxHP;
 
-                Console.WriteLine("\nПОЗДРАВЛЯЕМ!!!");
-                Console.WriteLine("Вы достигли 200-го хода и получили СЕКРЕТНУЮ БРОНЮ БОГОВ!");
-                Console.WriteLine("Теперь вы практически неуязвимы!");
+            Console.WriteLine($"Уровень {TurnCount}");
+            Console.WriteLine($"Максимальное HP повышено: {oldMaxHP} -> {MaxHP}");
+            Console.WriteLine("Здоровье полностью восстановлено!");
 
-                Heal(MaxHP);
-            }
+            System.Media.SoundPlayer achievement = new($"Sounds/{soundFile}");
+            achievement.Play();
         }
 
-        public void LoseSecretSword()
+        private void GiveGodSword()
         {
-            HasSecretSword = false;
-        }
+            Weapon godSword = new Weapon("МЕЧ БОГОВ", 50);
+            EquipWeapon(godSword);
 
-        public void LoseSecretArmor()
-        {
-            HasSecretArmor = false;
-        }
+            Console.WriteLine("Уровень 250");
+            Console.WriteLine("Получен: МЕЧ БОГОВ");
+            Console.WriteLine("Ваша атака значительно увеличена!");
 
-        public void DeveloperGiveSecretSword()
-        {
-            GiveSecretSword();
-        }
-
-        public void DeveloperGiveSecretArmor()
-        {
-            GiveSecretArmor();
+            System.Media.SoundPlayer achievement = new("Sounds/Secret_Sword.wav");
+            achievement.Play();
         }
 
         public void DeveloperSetTurnCount(int turns)
@@ -100,29 +90,18 @@ namespace TextRoguelike.Entities
 
         public int CalculateDamage(int enemyDefense)
         {
-            int baseDamage = Math.Max(1, Attack - enemyDefense);
-
-            if (HasSecretSword && random.NextDouble() < 0.3)
-            {
-                Console.WriteLine("Меч Богов излучает божественную энергию! Урон удвоен!");
-                return baseDamage * 2;
-            }
-
-            return baseDamage;
+            return Math.Max(1, Attack - enemyDefense);
         }
 
         public bool TryDodge()
         {
-            double dodgeChance = HasSecretArmor ? 0.6 : 0.4;
+            double dodgeChance = 0.4;
             return random.NextDouble() < dodgeChance;
         }
 
         public int CalculateBlock(int incomingDamage)
         {
-            double blockPercentage = HasSecretArmor ?
-                0.8 + (random.NextDouble() * 0.4) :
-                0.7 + (random.NextDouble() * 0.3);
-
+            double blockPercentage = 0.7 + (random.NextDouble() * 0.3);
             int blockedDamage = (int)(Defense * blockPercentage);
             return Math.Max(0, incomingDamage - blockedDamage);
         }
@@ -138,20 +117,19 @@ namespace TextRoguelike.Entities
             Console.WriteLine("Игрок");
             Console.WriteLine($"HP: {CurrentHP}/{MaxHP}");
             Console.Write($"Оружие: ");
-            if (HasSecretSword) Console.Write("");
             CurrentWeapon.DisplayStats();
             Console.Write($"Доспехи: ");
-            if (HasSecretArmor) Console.Write("");
             CurrentArmor.DisplayStats();
             Console.WriteLine($"Общая атака: {Attack}");
             Console.WriteLine($"Общая защита: {Defense}");
             Console.WriteLine($"Ход: {TurnCount}");
 
-            if (HasSecretSword || HasSecretArmor)
+            if (MaxHP >= 200)
             {
-                Console.Write("Обладатель: ");
-                if (HasSecretSword) Console.Write("МЕЧА БОГОВ ");
-                if (HasSecretArmor) Console.Write("БРОНИ БОГОВ");
+                Console.Write("Достижения: ");
+                if (MaxHP >= 200) Console.Write("Уровень 100 ");
+                if (MaxHP >= 300) Console.Write("Уровень 500 ");
+                if (MaxHP >= 400) Console.Write("Уровень 750");
                 Console.WriteLine("");
             }
         }

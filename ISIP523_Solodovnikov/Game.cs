@@ -45,10 +45,10 @@ namespace TextRoguelike
         private void ShowDeveloperMenu()
         {
             Console.WriteLine("\nРежим разработчика");
-            Console.WriteLine("1 - Пропустить до 99-го хода (получить Меч Богов)");
-            Console.WriteLine("2 - Пропустить до 199-го хода (получить Броню Богов)");
-            Console.WriteLine("3 - Установить произвольный уровень");
-            Console.WriteLine("4 - Получить все секретные предметы");
+            Console.WriteLine("1 - Пропустить до 99-го хода (получить +100 HP)");
+            Console.WriteLine("2 - Пропустить до 249-го хода (получить Меч Богов)");
+            Console.WriteLine("3 - Пропустить до 499-го хода (получить +100 HP)");
+            Console.WriteLine("4 - Пропустить до 749-го хода (получить +100 HP)");
             Console.WriteLine("5 - Полное восстановление здоровья");
             Console.WriteLine("6 - Выйти из режима разработчика");
             Console.Write("Выберите действие: ");
@@ -72,38 +72,18 @@ namespace TextRoguelike
                         break;
 
                     case "2":
-                        player.DeveloperSetTurnCount(199);
-                        Console.WriteLine("Установлен 199-й ход");
+                        player.DeveloperSetTurnCount(249);
+                        Console.WriteLine("Установлен 249-й ход");
                         break;
 
                     case "3":
-                        Console.Write("Введите номер хода: ");
-                        if (int.TryParse(Console.ReadLine(), out int turns))
-                        {
-                            player.DeveloperSetTurnCount(turns - 1);
-                            Console.WriteLine($"Установлен {turns}-й ход!");
-
-                            if (turns >= 100 && !player.HasSecretSword)
-                            {
-                                player.DeveloperGiveSecretSword();
-                                Console.WriteLine("Автоматически выдан Меч Богов!");
-                            }
-                            if (turns >= 200 && !player.HasSecretArmor)
-                            {
-                                player.DeveloperGiveSecretArmor();
-                                Console.WriteLine("Автоматически выдана Броня Богов!");
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("Неверный формат числа!");
-                        }
+                        player.DeveloperSetTurnCount(499);
+                        Console.WriteLine("Установлен 499-й ход");
                         break;
 
                     case "4":
-                        player.DeveloperGiveSecretSword();
-                        player.DeveloperGiveSecretArmor();
-                        Console.WriteLine("Выданы все секретные предметы!");
+                        player.DeveloperSetTurnCount(749);
+                        Console.WriteLine("Установлен 749-й ход");
                         break;
 
                     case "5":
@@ -142,9 +122,7 @@ namespace TextRoguelike
             Console.WriteLine("Добро пожаловать в игру! Ваша цель - выживать как можно дольше.");
             Console.WriteLine("Каждый ход вы можете встретить врага или найти сундук.");
             Console.WriteLine("Каждые 10 ходов вас ждёт встреча с боссом!");
-            Console.WriteLine("На 100, 250, 500 и 750 Вас ждут награды");
-            Console.WriteLine("После 500 уровня боссы будут встречаться каждые 5 уровней и станут сильнее!");
-            Console.WriteLine("На 1000 уровне игра закончится");
+            Console.WriteLine("На 100, 250, 500 и 750 уровнях Вас ждут особыем награды");
             Console.WriteLine("\nНажмите любую клавишу для старта игры");
             Console.ReadKey();
             Console.Clear();
@@ -158,23 +136,7 @@ namespace TextRoguelike
                 player.DisplayStats();
                 Console.WriteLine();
 
-                if (player.TurnCount == 100 && !player.HasSecretSword)
-                {
-                    SoundPlayer achievement = new("Sounds/Secret_Sword.wav");
-                    achievement.Play();
-                    player.GiveSecretSword();
-                    Console.WriteLine("\nНажмите любую клавишу для продолжения");
-                    Console.ReadKey();
-                }
-
-                if (player.TurnCount == 200 && !player.HasSecretArmor)
-                {
-                    SoundPlayer achievement = new("Sounds/Secret_Armor.wav");
-                    achievement.Play();
-                    player.GiveSecretArmor();
-                    Console.WriteLine("\nНажмите любую клавишу для продолжения");
-                    Console.ReadKey();
-                }
+                player.CheckMilestoneRewards(player.TurnCount);
 
                 if (player.TurnCount % 10 == 0)
                 {
@@ -414,28 +376,6 @@ namespace TextRoguelike
                     Console.WriteLine($"\nВаше текущее оружие: ");
                     player.CurrentWeapon.DisplayStats();
 
-                    if (player.HasSecretSword)
-                    {
-                        Console.WriteLine("\nВнимание! У вас есть МЕЧ БОГОВ!");
-                        Console.Write("Вы уверены, что хотите расстаться с секретным оружием? (y/n): ");
-
-                        string confirmation = ReadLineWithDeveloperCheck();
-
-                        if (developerMode)
-                        {
-                            HandleDeveloperInput();
-                            chest.Stop();
-                            if (!developerMode) Console.Clear();
-                            return;
-                        }
-
-                        if (confirmation.ToLower() != "y")
-                        {
-                            Console.WriteLine("Вы оставили новое оружие в сундуке");
-                            break;
-                        }
-                    }
-
                     Console.Write("\nВзять новое оружие? (y/n): ");
 
                     string weaponChoice = ReadLineWithDeveloperCheck();
@@ -452,11 +392,6 @@ namespace TextRoguelike
                     {
                         player.EquipWeapon(newWeapon);
                         Console.WriteLine("\nВы экипировали новое оружие!");
-                        if (player.HasSecretSword && newWeapon.Attack < 50)
-                        {
-                            player.LoseSecretSword();
-                            Console.WriteLine("Вы потеряли МЕЧ БОГОВ!");
-                        }
                     }
                     break;
 
@@ -466,28 +401,6 @@ namespace TextRoguelike
                     newArmor.DisplayStats();
                     Console.WriteLine($"\nВаши текущие доспехи: ");
                     player.CurrentArmor.DisplayStats();
-
-                    if (player.HasSecretArmor)
-                    {
-                        Console.WriteLine("\nВнимание! У вас есть БРОНЯ БОГОВ!");
-                        Console.Write("Вы уверены, что хотите расстаться с секретной бронёй? (y/n): ");
-
-                        string confirmation = ReadLineWithDeveloperCheck();
-
-                        if (developerMode)
-                        {
-                            HandleDeveloperInput();
-                            chest.Stop();
-                            if (!developerMode) Console.Clear();
-                            return;
-                        }
-
-                        if (confirmation.ToLower() != "y")
-                        {
-                            Console.WriteLine("Вы оставили новые доспехи в сундуке");
-                            break;
-                        }
-                    }
 
                     Console.Write("\nВзять новые доспехи? (y/n): ");
 
@@ -505,11 +418,6 @@ namespace TextRoguelike
                     {
                         player.EquipArmor(newArmor);
                         Console.WriteLine("\nВы экипировали новые доспехи!");
-                        if (player.HasSecretArmor && newArmor.Defense < 40)
-                        {
-                            player.LoseSecretArmor();
-                            Console.WriteLine("Вы потеряли БРОНЮ БОГОВ!");
-                        }
                     }
                     break;
             }
@@ -520,28 +428,6 @@ namespace TextRoguelike
         {
             Console.WriteLine("\nИгра окончена");
             Console.WriteLine($"Вы продержались {player.TurnCount} ходов");
-
-            if (player.HasSecretSword && player.HasSecretArmor)
-            {
-                Console.WriteLine("Вы получили И МЕЧ БОГОВ И БРОНЮ БОГОВ!");
-            }
-            else if (player.HasSecretSword)
-            {
-                Console.WriteLine("Вы получили МЕЧ БОГОВ!");
-            }
-            else if (player.HasSecretArmor)
-            {
-                Console.WriteLine("Вы получили БРОНЮ БОГОВ!");
-            }
-            else if (player.TurnCount >= 190)
-            {
-                Console.WriteLine("Отличный результат! Вы почти достигли легендарной брони!");
-            }
-            else if (player.TurnCount >= 90)
-            {
-                Console.WriteLine("Хороший результат! Вы почти достигли легендарного меча!");
-            }
-
             Console.WriteLine("Спасибо за игру!");
         }
 
@@ -555,4 +441,4 @@ namespace TextRoguelike
             return EnemyFactory.CreateRandomBoss();
         }
     }
-}
+}   
