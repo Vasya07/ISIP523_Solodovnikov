@@ -8,6 +8,7 @@ namespace TextRoguelike.Entities
         public Armor CurrentArmor { get; private set; }
         public int TurnCount { get; set; }
         public bool IsFrozen { get; set; }
+        public bool HasGodSword { get; private set; }
 
         private Random random;
 
@@ -16,6 +17,7 @@ namespace TextRoguelike.Entities
             CurrentWeapon = new Weapon("Ржавый меч", 5);
             CurrentArmor = new Armor("Кожанная броня", 3);
             random = new Random();
+            HasGodSword = false;
             UpdateStats();
         }
 
@@ -61,26 +63,30 @@ namespace TextRoguelike.Entities
             int oldMaxHP = MaxHP;
             MaxHP += amount;
             CurrentHP = MaxHP;
-
-            Console.WriteLine($"Уровень {TurnCount}");
-            Console.WriteLine($"Максимальное HP повышено: {oldMaxHP} -> {MaxHP}");
-            Console.WriteLine("Здоровье полностью восстановлено!");
-
             System.Media.SoundPlayer increase_hp = new($"Sounds/{soundFile}");
             increase_hp.Play();
+
+            Console.WriteLine("ПОЗДРАВЛЯЕМ!!!");
+            Console.WriteLine($"Вы достигли {TurnCount} уровня!");
+            Console.WriteLine($"Здоровье полностью восстановлено, а также максимальное HP повышено: {oldMaxHP} -> {MaxHP}");
+            Console.WriteLine("Нажмите любую клавишу для продолжения");
+            Console.ReadKey();
         }
 
         private void GiveGodSword()
         {
             Weapon godSword = new Weapon("МЕЧ БОГОВ", 50);
             EquipWeapon(godSword);
-
-            Console.WriteLine("Уровень 250");
-            Console.WriteLine("Получен: МЕЧ БОГОВ");
-            Console.WriteLine("Ваша атака значительно увеличена!");
-
+            HasGodSword = true;
             System.Media.SoundPlayer achievement = new("Sounds/Secret_Sword.wav");
             achievement.Play();
+
+            Console.WriteLine("ПОЗДРАВЛЯЕМ!!!");
+            Console.WriteLine($"Вы достигли 250 уровня!");
+            Console.WriteLine("Ваша атака значительно увеличена!");
+            Console.WriteLine("ВНИМАНИЕ: Враги стали вдвое сильнее!");
+            Console.WriteLine("Нажмите любую клавишу для продолжения");
+            Console.ReadKey();
         }
 
         public void DeveloperSetTurnCount(int turns)
@@ -131,6 +137,11 @@ namespace TextRoguelike.Entities
                 if (MaxHP >= 300) Console.Write("Уровень 500 ");
                 if (MaxHP >= 500) Console.Write("Уровень 750");
                 Console.WriteLine("");
+            }
+
+            if (HasGodSword)
+            {
+                Console.WriteLine("Обладатель МЕЧА БОГОВ (враги усилены)");
             }
         }
     }

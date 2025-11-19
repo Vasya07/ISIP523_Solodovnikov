@@ -51,5 +51,16 @@ namespace TextRoguelike.Factories
                 _ => new Goblin()
             };
         }
+        public static Enemy CreateEnhancedEnemy(string enemyType, Player player)
+        {
+            Enemy enemy = CreateEnemy(enemyType);
+
+            if (player.HasGodSword)
+            {
+                enemy.EnhanceEnemy();
+            }
+
+            return enemy;
+        }
     }
 }

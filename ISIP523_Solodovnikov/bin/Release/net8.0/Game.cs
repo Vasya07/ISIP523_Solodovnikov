@@ -48,7 +48,7 @@ namespace TextRoguelike
             Console.WriteLine("1 - Пропустить до 99-го хода (получить +100 HP)");
             Console.WriteLine("2 - Пропустить до 249-го хода (получить Меч Богов)");
             Console.WriteLine("3 - Пропустить до 499-го хода (получить +100 HP)");
-            Console.WriteLine("4 - Пропустить до 749-го хода (получить +100 HP)");
+            Console.WriteLine("4 - Пропустить до 749-го хода (получить +200 HP)");
             Console.WriteLine("5 - Полное восстановление здоровья");
             Console.WriteLine("6 - Выйти из режима разработчика");
             Console.Write("Выберите действие: ");
@@ -171,7 +171,17 @@ namespace TextRoguelike
         private void FightEnemy()
         {
             Enemy enemy = CreateRandomEnemy();
+
+            if (player.HasGodSword)
+            {
+                enemy.EnhanceEnemy();
+            }
+
             Console.WriteLine($"Вы встретили {enemy.Name}!");
+            if (player.HasGodSword)
+            {
+                Console.WriteLine("Этот враг усилен силой Меча Богов!");
+            }
             Console.WriteLine($"Особенность: {enemy.GetSpecialAbility()}");
 
             while (enemy.IsAlive && player.IsAlive)
@@ -214,8 +224,18 @@ namespace TextRoguelike
 
         private void FightBoss()
         {
+            SoundPlayer boss_win = new(@"Sounds/Boss_Win.wav");
             Enemy boss = CreateRandomBoss();
+            if (player.HasGodSword)
+            {
+                boss.EnhanceEnemy();
+            }
+
             Console.WriteLine($"\nПоявился босс: {boss.Name}!");
+            if (player.HasGodSword)
+            {
+                Console.WriteLine("Этот босс усилен силой Меча Богов!");
+            }
             boss.DisplayStats();
             Console.WriteLine();
 
@@ -252,9 +272,12 @@ namespace TextRoguelike
             if (player.IsAlive && !developerMode)
             {
                 Console.WriteLine($"Невероятно! Вы победили {boss.Name}!");
-                SoundPlayer boss_win = new(@"Sounds/Boss_Win.wav");
                 boss_win.Play();
+                Console.WriteLine("Нажмите любую клавишу для продолжения");
+                Console.ReadKey();
+                Console.Clear();
             }
+            boss_win.Stop();
         }
 
         private void PlayerTurn(Enemy enemy)
@@ -429,6 +452,10 @@ namespace TextRoguelike
             Console.WriteLine("\nИгра окончена");
             Console.WriteLine($"Вы продержались {player.TurnCount} ходов");
             Console.WriteLine("Спасибо за игру!");
+            SoundPlayer lose_game = new SoundPlayer("Sounds/Lose.wav");
+            lose_game.Play();
+            Console.WriteLine("Нажмите любую клавишу для выхода");
+            Console.ReadKey();
         }
 
         private Enemy CreateRandomEnemy()
