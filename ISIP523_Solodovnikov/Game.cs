@@ -397,11 +397,9 @@ namespace TextRoguelike
 
         private void OpenChest()
         {
-            SoundPlayer chest = new("Sounds/Chest.wav");
             Console.WriteLine("Вы нашли сундук!");
 
             int itemType = random.Next(3);
-            chest.PlayLooping();
 
             switch (itemType)
             {
@@ -424,11 +422,11 @@ namespace TextRoguelike
                     if (developerMode)
                     {
                         HandleDeveloperInput();
-                        chest.Stop();
                         if (!developerMode) Console.Clear();
                         return;
                     }
 
+                    if (weaponChoice.ToLower() == "y")
                     if (weaponChoice.ToLower() == "y")
                     {
                         player.EquipWeapon(newWeapon);
@@ -450,7 +448,6 @@ namespace TextRoguelike
                     if (developerMode)
                     {
                         HandleDeveloperInput();
-                        chest.Stop();
                         if (!developerMode) Console.Clear();
                         return;
                     }
@@ -462,7 +459,6 @@ namespace TextRoguelike
                     }
                     break;
             }
-            chest.Stop();
         }
 
         private void GameOver()
