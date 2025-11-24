@@ -15,11 +15,11 @@ namespace TextRoguelike.Entities.Bosses
         {
             int baseDamage = Attack;
             int finalDamage = Math.Max(1, baseDamage - playerDefense);
-            double critChance = 0.3;
+            double critChance = 1.0;
 
             if (random.NextDouble() < critChance)
             {
-                Console.WriteLine("ВВГ наносит мощный критический удар!");
+                Console.WriteLine("ВВГ наносит мощный критический урон!");
                 System.Media.SoundPlayer critcial_hint_vvg = new("Sounds/Critical_Hint.wav");
                 critcial_hint_vvg.Play();
                 return Math.Max(1, (int)(baseDamage * 1.5));

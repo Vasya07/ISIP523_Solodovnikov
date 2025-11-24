@@ -2,7 +2,7 @@ namespace TextRoguelike.Entities.Enemies
 {
     public class Goblin : Enemy
     {
-        private const double CRIT_CHANCE = 0.2;
+        private const double CRIT_CHANCE = 0.5;
         private const double CRIT_MULTIPLIER = 1.5;
 
         public Goblin() : base("Гоблин", 30, 8, 3) { }
@@ -25,7 +25,7 @@ namespace TextRoguelike.Entities.Enemies
 
         public override string GetSpecialAbility()
         {
-            return "Шанс критического удара - 20%";
+            return "Шанс критического удара - 50%";
         }
     }
 }
